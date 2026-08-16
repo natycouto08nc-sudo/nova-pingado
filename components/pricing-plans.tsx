@@ -126,6 +126,7 @@ export function PricingPlans() {
                 <Button
                   className="h-11 w-full"
                   variant={plan.popular ? "default" : "outline"}
+                  nativeButton={false}
                   render={<a href="#como-funciona" />}
                 >
                   Montar meu clube

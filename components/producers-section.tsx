@@ -89,6 +89,7 @@ export function ProducersSection() {
           <Button
             variant="outline"
             className="h-11 px-6"
+            nativeButton={false}
             render={<a href="#produtos" />}
           >
             Conhecer todos os produtores

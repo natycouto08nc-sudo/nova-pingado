@@ -40,6 +40,7 @@ export function Hero() {
             <Button
               size="lg"
               className="group h-12 px-6 text-base"
+              nativeButton={false}
               render={<a href="#como-funciona" />}
             >
               Monte meu perfil de sabor
