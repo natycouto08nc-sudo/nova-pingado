@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { ArrowRight } from "lucide-react"
+import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 
@@ -40,7 +41,7 @@ export function Hero() {
             <Button
               size="lg"
               className="group h-12 px-6 text-base"
-              render={<a href="#como-funciona" />}
+              render={<Link href="/onboarding" />}
             >
               Monte meu perfil de sabor
               <ArrowRight

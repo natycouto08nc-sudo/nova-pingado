@@ -1,4 +1,7 @@
+"use client"
+
 import Image from "next/image"
+import Link from "next/link"
 import { Check } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
@@ -16,6 +19,7 @@ import { cn } from "@/lib/utils"
 const plans = [
   {
     name: "Descoberta",
+    key: "basico",
     price: "89,90",
     description: "Para quem está começando a explorar cafés especiais.",
     benefits: [
@@ -28,6 +32,7 @@ const plans = [
   },
   {
     name: "Sommelier",
+    key: "premium",
     price: "139,90",
     description: "O equilíbrio ideal entre variedade e volume.",
     benefits: [
@@ -40,6 +45,7 @@ const plans = [
   },
   {
     name: "Colecionador",
+    key: "plus",
     price: "219,90",
     description: "Para quem quer provar o que ninguém provou.",
     benefits: [
@@ -123,13 +129,17 @@ export function PricingPlans() {
               </CardContent>
 
               <CardFooter>
-                <Button
-                  className="h-11 w-full"
-                  variant={plan.popular ? "default" : "outline"}
-                  render={<a href="#como-funciona" />}
-                >
-                  Montar meu clube
-                </Button>
+                <Link href="/onboarding" passHref legacyBehavior>
+                  <Button
+                    className="h-11 w-full"
+                    variant={plan.popular ? "default" : "outline"}
+                    onClick={() => {
+                      localStorage.setItem('pingado_selected_plan', plan.key);
+                    }}
+                  >
+                    Montar meu clube
+                  </Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}

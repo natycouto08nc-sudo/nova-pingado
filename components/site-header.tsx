@@ -1,21 +1,40 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, Search, User, X } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Menu, Search, User, X, LogOut, CreditCard, ShoppingBag, Sliders } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-
-const navigation = [
-  { label: "Assinatura", href: "#planos" },
-  { label: "Como Funciona", href: "#como-funciona" },
-  { label: "Nossos Produtores", href: "#produtores" },
-  { label: "Loja", href: "#produtos" },
-  { label: "Sobre", href: "#newsletter" },
-]
+import { useAuth } from "@/context/auth-context"
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const { user, signOut } = useAuth()
+  const pathname = usePathname()
+
+  const isProfileRoute = pathname?.startsWith('/perfil')
+
+  const navigation = isProfileRoute
+    ? [
+        { label: "Página Inicial", href: "/" },
+        { label: "Loja", href: "/loja" },
+      ]
+    : [
+        { label: "Assinatura", href: "/#planos" },
+        { label: "Como Funciona", href: "/#como-funciona" },
+        { label: "Nossos Produtores", href: "/#produtores" },
+        { label: "Loja", href: "/#produtos" },
+        { label: "Sobre", href: "/#newsletter" },
+      ]
+
+  const handleSignOutClick = async () => {
+    setDropdownOpen(false)
+    await signOut()
+    window.location.href = '/'
+  }
 
   return (
     <header className="sticky top-10 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
@@ -35,48 +54,124 @@ export function SiteHeader() {
 
           <nav aria-label="Navegação principal" className="hidden lg:block">
             <ul className="flex items-center gap-6">
-              {navigation.slice(0, 2).map((item) => (
+              {navigation.slice(0, isProfileRoute ? 2 : 2).map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     className="text-sm text-foreground/70 underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
           </nav>
         </div>
 
-        <a
-          href="#top"
+        <Link
+          href="/"
           className="font-serif text-2xl tracking-[0.32em] text-foreground transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring md:text-3xl"
         >
           PINGADO
-        </a>
+        </Link>
 
-        <div className="flex flex-1 items-center justify-end gap-1">
-          <nav aria-label="Navegação secundária" className="hidden lg:block">
-            <ul className="flex items-center gap-6">
-              {navigation.slice(2).map((item) => (
-                <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className="text-sm text-foreground/70 underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        <div className="flex flex-1 items-center justify-end gap-1 relative">
+          {!isProfileRoute && (
+            <nav aria-label="Navegação secundária" className="hidden lg:block">
+              <ul className="flex items-center gap-6 mr-6">
+                {navigation.slice(2).map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="text-sm text-foreground/70 underline-offset-4 transition-colors hover:text-primary hover:underline focus-visible:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
           <Button variant="ghost" size="icon" aria-label="Buscar cafés">
             <Search />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Minha conta">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            aria-label="Minha conta"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className={cn(dropdownOpen && "bg-muted")}
+          >
             <User />
           </Button>
+
+          {dropdownOpen && (
+            <div className="absolute right-0 top-12 z-50 w-56 rounded-xl border border-border bg-card p-1.5 shadow-lg text-card-foreground animate-in fade-in duration-100 font-sans">
+              {user ? (
+                <div className="flex flex-col">
+                  <div className="px-3 py-2 border-b border-border/60 text-[10px] font-bold text-muted-foreground uppercase tracking-wider truncate">
+                    Olá, {user.nome.split(' ')[0]}
+                  </div>
+                  <Link 
+                    href="/perfil" 
+                    onClick={() => setDropdownOpen(false)} 
+                    className="px-3 py-2 text-xs hover:bg-muted rounded-lg font-bold transition-colors text-left flex items-center gap-2"
+                  >
+                    <User size={14} className="text-primary" />
+                    Meu Painel
+                  </Link>
+                  <Link 
+                    href="/perfil/assinatura" 
+                    onClick={() => setDropdownOpen(false)} 
+                    className="px-3 py-2 text-xs hover:bg-muted rounded-lg font-bold transition-colors text-left flex items-center gap-2"
+                  >
+                    <CreditCard size={14} className="text-primary" />
+                    Minha Assinatura
+                  </Link>
+                  <Link 
+                    href="/perfil/compras" 
+                    onClick={() => setDropdownOpen(false)} 
+                    className="px-3 py-2 text-xs hover:bg-muted rounded-lg font-bold transition-colors text-left flex items-center gap-2"
+                  >
+                    <ShoppingBag size={14} className="text-primary" />
+                    Minhas Compras
+                  </Link>
+                  <Link 
+                    href="/perfil/sensorial" 
+                    onClick={() => setDropdownOpen(false)} 
+                    className="px-3 py-2 text-xs hover:bg-muted rounded-lg font-bold transition-colors text-left flex items-center gap-2"
+                  >
+                    <Sliders size={14} className="text-primary" />
+                    Refazer Perfil Sensorial
+                  </Link>
+                  <button 
+                    onClick={handleSignOutClick}
+                    className="px-3 py-2 text-xs hover:bg-red-500/5 text-red-600 rounded-lg font-bold transition-colors text-left w-full flex items-center gap-2 border-t border-border/60 mt-1 pt-2"
+                  >
+                    <LogOut size={14} />
+                    Sair da Conta
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col">
+                  <Link 
+                    href="/login" 
+                    onClick={() => setDropdownOpen(false)} 
+                    className="px-3 py-2.5 text-xs hover:bg-muted rounded-lg font-bold transition-colors text-left"
+                  >
+                    Entrar
+                  </Link>
+                  <Link 
+                    href="/onboarding" 
+                    onClick={() => setDropdownOpen(false)} 
+                    className="px-3 py-2.5 text-xs hover:bg-muted rounded-lg font-bold transition-colors text-left"
+                  >
+                    Criar Conta / Assinar
+                  </Link>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
