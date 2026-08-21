@@ -1,9 +1,12 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { MOCK_CAFES } from "@/lib/coffees"
+import type { Cafe } from "@/lib/types"
 
 type Product = {
   name: string
@@ -11,137 +14,32 @@ type Product = {
   image: string
   alt: string
   badge?: string
+  href: string
 }
 
-const categories: { value: string; label: string; products: Product[] }[] = [
-  {
-    value: "graos",
-    label: "Grãos",
-    products: [
-      {
-        name: "Café Pingado Bourbon Amarelo em Grãos 250g",
-        price: "48,90",
-        image: "/images/produto-graos-bourbon.png",
-        alt: "Pacote kraft de café Pingado Bourbon Amarelo em grãos",
-        badge: "Novo produtor",
-      },
-      {
-        name: "Café Pingado Catuaí Vermelho em Grãos 250g",
-        price: "44,90",
-        image: "/images/produto-graos-catuai.png",
-        alt: "Pacote verde escuro de café Pingado Catuaí Vermelho em grãos",
-      },
-      {
-        name: "Microlote Fermentação Natural em Grãos 250g",
-        price: "79,90",
-        image: "/images/produto-microlote.png",
-        alt: "Pacote escuro de microlote Pingado ao lado de grãos crus em pote de vidro",
-        badge: "Edição limitada",
-      },
-      {
-        name: "Café Pingado Blend da Casa em Grãos 500g",
-        price: "72,90",
-        image: "/images/produto-graos-bourbon.png",
-        alt: "Pacote kraft de café Pingado Blend da Casa em grãos",
-      },
-    ],
-  },
-  {
-    value: "moidos",
-    label: "Moídos",
-    products: [
-      {
-        name: "Café Pingado Bourbon Amarelo Moído 250g",
-        price: "46,90",
-        image: "/images/produto-moido.png",
-        alt: "Pacote creme de café Pingado moído aberto com pó de café",
-      },
-      {
-        name: "Café Pingado Prensa Francesa Moagem Grossa 250g",
-        price: "45,90",
-        image: "/images/produto-moido.png",
-        alt: "Pacote de café Pingado com moagem grossa para prensa francesa",
-      },
-      {
-        name: "Café Pingado Espresso Moagem Fina 250g",
-        price: "49,90",
-        image: "/images/produto-graos-catuai.png",
-        alt: "Pacote verde escuro de café Pingado com moagem fina para espresso",
-        badge: "Novo produtor",
-      },
-      {
-        name: "Café Pingado Coado Moagem Média 500g",
-        price: "74,90",
-        image: "/images/produto-moido.png",
-        alt: "Pacote creme de café Pingado com moagem média para coado",
-      },
-    ],
-  },
-  {
-    value: "drip",
-    label: "Drip Coffee",
-    products: [
-      {
-        name: "Drip Coffee Pingado Mantiqueira Caixa 10un",
-        price: "59,90",
-        image: "/images/produto-drip.png",
-        alt: "Sachês de drip coffee Pingado em embalagem creme e terracota",
-      },
-      {
-        name: "Drip Coffee Pingado Frutado Caixa 10un",
-        price: "62,90",
-        image: "/images/produto-drip.png",
-        alt: "Sachês de drip coffee Pingado de perfil frutado",
-        badge: "Novo produtor",
-      },
-      {
-        name: "Drip Coffee Pingado Intenso Caixa 20un",
-        price: "109,90",
-        image: "/images/produto-drip.png",
-        alt: "Caixa com vinte sachês de drip coffee Pingado perfil intenso",
-      },
-      {
-        name: "Kit Degustação Drip Coffee 4 origens",
-        price: "89,90",
-        image: "/images/produto-drip.png",
-        alt: "Kit degustação de drip coffee Pingado com quatro origens",
-        badge: "Edição limitada",
-      },
-    ],
-  },
-  {
-    value: "capsulas",
-    label: "Cápsulas",
-    products: [
-      {
-        name: "Cápsulas Pingado Bourbon Caixa 10un",
-        price: "39,90",
-        image: "/images/produto-capsulas.png",
-        alt: "Cápsulas de espresso Pingado em alumínio terracota e dourado",
-      },
-      {
-        name: "Cápsulas Pingado Intenso Caixa 10un",
-        price: "41,90",
-        image: "/images/produto-capsulas.png",
-        alt: "Cápsulas de espresso Pingado perfil intenso",
-      },
-      {
-        name: "Cápsulas Pingado Descafeinado Caixa 10un",
-        price: "43,90",
-        image: "/images/produto-capsulas.png",
-        alt: "Cápsulas de espresso Pingado descafeinado",
-        badge: "Novo produtor",
-      },
-      {
-        name: "Cápsulas Pingado Microlote Caixa 10un",
-        price: "58,90",
-        image: "/images/produto-microlote.png",
-        alt: "Cápsulas de microlote raro Pingado em embalagem escura",
-        badge: "Edição limitada",
-      },
-    ],
-  },
+function toProduct(cafe: Cafe): Product {
+  return {
+    name: cafe.nome,
+    price: (cafe.preco ?? 0).toFixed(2).replace(".", ","),
+    image: cafe.imagem_url ?? "/placeholder.jpg",
+    alt: `Pacote de café Pingado ${cafe.nome}`,
+    badge: cafe.badge,
+    href: `/loja/${cafe.slug}`,
+  }
+}
+
+const CATEGORY_TABS: { value: NonNullable<Cafe["formato"]>; label: string }[] = [
+  { value: "graos", label: "Grãos" },
+  { value: "moido", label: "Moídos" },
+  { value: "drip", label: "Drip Coffee" },
+  { value: "capsula", label: "Cápsulas" },
 ]
+
+const categories = CATEGORY_TABS.map((tab) => ({
+  value: tab.value,
+  label: tab.label,
+  products: MOCK_CAFES.filter((cafe) => (cafe.formato ?? "graos") === tab.value).map(toProduct),
+}))
 
 export function ProductGrid() {
   return (
@@ -182,8 +80,8 @@ export function ProductGrid() {
               <ul className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
                 {category.products.map((product) => (
                   <li key={product.name}>
-                    <a
-                      href="#planos"
+                    <Link
+                      href={product.href}
                       className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                     >
                       <div className="relative aspect-square overflow-hidden bg-muted">
@@ -209,7 +107,7 @@ export function ProductGrid() {
                           R$ {product.price}
                         </p>
                       </div>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

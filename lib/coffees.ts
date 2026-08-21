@@ -48,6 +48,26 @@ export const MOCK_PRODUTORES: Produtor[] = [
   }
 ];
 
+/** Gera as variações de peso padrão (250g/500g/1kg) a partir do preço base de 250g. */
+function variantesPadrao(precoBase: number, disponibilidade: [boolean, boolean, boolean] = [true, true, true]) {
+  return [
+    { id: '250g', peso: '250g', preco: precoBase, disponivel: disponibilidade[0] },
+    { id: '500g', peso: '500g', preco: Number((precoBase * 1.9).toFixed(2)), disponivel: disponibilidade[1] },
+    { id: '1kg', peso: '1kg', preco: Number((precoBase * 3.6).toFixed(2)), disponivel: disponibilidade[2] }
+  ];
+}
+
+const MOAGEM_OPCOES_PADRAO = [
+  'Em grãos',
+  'Espresso',
+  'Moka',
+  'Aeropress',
+  'V60',
+  'Chemex',
+  'Prensa Francesa',
+  'Filtro tradicional'
+];
+
 export const MOCK_CAFES: Cafe[] = [
   {
     id: 'cafe-1',
@@ -66,7 +86,31 @@ export const MOCK_CAFES: Cafe[] = [
     ativo: true,
     preco: 98.00,
     created_at: new Date().toISOString(),
-    produtores: MOCK_PRODUTORES[0]
+    produtores: MOCK_PRODUTORES[0],
+
+    slug: 'yellow-bourbon-natural',
+    formato: 'graos',
+    badge: 'Mais vendido',
+    variantes: variantesPadrao(98.0),
+    moagem_opcoes: MOAGEM_OPCOES_PADRAO,
+    origem: 'Brasil',
+    fazenda: 'Fazenda Santa Inês',
+    variedade: 'Bourbon Amarelo',
+    processo: 'Natural',
+    torra: 'Média',
+    altitude: '1.250m',
+    safra: '2025',
+    preparos: [
+      {
+        metodo: 'V60',
+        cafe: '15g',
+        agua: '250ml',
+        temperatura: '92°C',
+        moagem: 'Média',
+        tempo: '2min30s a 3min'
+      }
+    ],
+    estoque: 24
   },
   {
     id: 'cafe-2',
@@ -85,7 +129,30 @@ export const MOCK_CAFES: Cafe[] = [
     ativo: true,
     preco: 79.00,
     created_at: new Date().toISOString(),
-    produtores: MOCK_PRODUTORES[1]
+    produtores: MOCK_PRODUTORES[1],
+
+    slug: 'catuai-honey',
+    formato: 'graos',
+    variantes: variantesPadrao(79.0),
+    moagem_opcoes: MOAGEM_OPCOES_PADRAO,
+    origem: 'Brasil',
+    fazenda: 'Sítio Bom Jesus',
+    variedade: 'Catuaí Vermelho',
+    processo: 'Honey',
+    torra: 'Média Clara',
+    altitude: '980m',
+    safra: '2025',
+    preparos: [
+      {
+        metodo: 'Aeropress',
+        cafe: '16g',
+        agua: '220ml',
+        temperatura: '88°C',
+        moagem: 'Média-fina',
+        tempo: '1min30s'
+      }
+    ],
+    estoque: 18
   },
   {
     id: 'cafe-3',
@@ -104,7 +171,32 @@ export const MOCK_CAFES: Cafe[] = [
     ativo: true,
     preco: 85.00,
     created_at: new Date().toISOString(),
-    produtores: MOCK_PRODUTORES[2]
+    produtores: MOCK_PRODUTORES[2],
+
+    slug: 'bourbon-amarelo-cereja-natural',
+    formato: 'graos',
+    badge: 'Oferta especial',
+    preco_original: 99.00,
+    variantes: variantesPadrao(85.0),
+    moagem_opcoes: MOAGEM_OPCOES_PADRAO,
+    origem: 'Brasil',
+    fazenda: 'Fazenda Ambiental Fortaleza',
+    variedade: 'Bourbon Amarelo',
+    processo: 'Natural',
+    torra: 'Média',
+    altitude: '1.100m',
+    safra: '2024',
+    preparos: [
+      {
+        metodo: 'Chemex',
+        cafe: '30g',
+        agua: '500ml',
+        temperatura: '94°C',
+        moagem: 'Média-grossa',
+        tempo: '4min'
+      }
+    ],
+    estoque: 32
   },
   {
     id: 'cafe-4',
@@ -123,7 +215,31 @@ export const MOCK_CAFES: Cafe[] = [
     ativo: true,
     preco: 145.00,
     created_at: new Date().toISOString(),
-    produtores: MOCK_PRODUTORES[3]
+    produtores: MOCK_PRODUTORES[3],
+
+    slug: 'microlote-geisha',
+    formato: 'graos',
+    badge: 'Edição limitada',
+    variantes: variantesPadrao(145.0, [true, true, false]),
+    moagem_opcoes: MOAGEM_OPCOES_PADRAO,
+    origem: 'Brasil',
+    fazenda: 'Carmo Coffees',
+    variedade: 'Geisha',
+    processo: 'Lavado',
+    torra: 'Clara',
+    altitude: '1.400m',
+    safra: '2025',
+    preparos: [
+      {
+        metodo: 'V60',
+        cafe: '13g',
+        agua: '220ml',
+        temperatura: '90°C',
+        moagem: 'Média-fina',
+        tempo: '2min45s'
+      }
+    ],
+    estoque: 4
   },
   {
     id: 'cafe-5',
@@ -142,7 +258,30 @@ export const MOCK_CAFES: Cafe[] = [
     ativo: true,
     preco: 72.00,
     created_at: new Date().toISOString(),
-    produtores: MOCK_PRODUTORES[4]
+    produtores: MOCK_PRODUTORES[4],
+
+    slug: 'sweet-collection',
+    formato: 'graos',
+    variantes: variantesPadrao(72.0),
+    moagem_opcoes: MOAGEM_OPCOES_PADRAO,
+    origem: 'Brasil',
+    fazenda: 'Daterra Coffee',
+    variedade: 'Blend (Catuaí + Mundo Novo)',
+    processo: 'Cereja Descascado',
+    torra: 'Média',
+    altitude: '1.020m',
+    safra: '2025',
+    preparos: [
+      {
+        metodo: 'Prensa Francesa',
+        cafe: '20g',
+        agua: '300ml',
+        temperatura: '95°C',
+        moagem: 'Grossa',
+        tempo: '4min'
+      }
+    ],
+    estoque: 40
   },
   {
     id: 'cafe-6',
@@ -161,7 +300,30 @@ export const MOCK_CAFES: Cafe[] = [
     ativo: true,
     preco: 76.00,
     created_at: new Date().toISOString(),
-    produtores: MOCK_PRODUTORES[0]
+    produtores: MOCK_PRODUTORES[0],
+
+    slug: 'mundo-novo-natural',
+    formato: 'graos',
+    variantes: variantesPadrao(76.0),
+    moagem_opcoes: MOAGEM_OPCOES_PADRAO,
+    origem: 'Brasil',
+    fazenda: 'Fazenda Santa Inês',
+    variedade: 'Mundo Novo',
+    processo: 'Natural',
+    torra: 'Escura',
+    altitude: '1.180m',
+    safra: '2024',
+    preparos: [
+      {
+        metodo: 'Espresso',
+        cafe: '18g',
+        agua: '36ml',
+        temperatura: '93°C',
+        moagem: 'Fina',
+        tempo: '25s a 30s'
+      }
+    ],
+    estoque: 15
   },
   {
     id: 'cafe-7',
@@ -180,7 +342,30 @@ export const MOCK_CAFES: Cafe[] = [
     ativo: true,
     preco: 110.00,
     created_at: new Date().toISOString(),
-    produtores: MOCK_PRODUTORES[1]
+    produtores: MOCK_PRODUTORES[1],
+
+    slug: 'typica-fermentado',
+    formato: 'graos',
+    variantes: variantesPadrao(110.0),
+    moagem_opcoes: MOAGEM_OPCOES_PADRAO,
+    origem: 'Brasil',
+    fazenda: 'Sítio Bom Jesus',
+    variedade: 'Typica',
+    processo: 'Fermentado (48h)',
+    torra: 'Média',
+    altitude: '1.050m',
+    safra: '2025',
+    preparos: [
+      {
+        metodo: 'V60',
+        cafe: '15g',
+        agua: '250ml',
+        temperatura: '91°C',
+        moagem: 'Média',
+        tempo: '2min45s'
+      }
+    ],
+    estoque: 10
   },
   {
     id: 'cafe-8',
@@ -199,6 +384,328 @@ export const MOCK_CAFES: Cafe[] = [
     ativo: true,
     preco: 88.00,
     created_at: new Date().toISOString(),
-    produtores: MOCK_PRODUTORES[3]
+    produtores: MOCK_PRODUTORES[3],
+
+    slug: 'catuai-pulped-natural',
+    formato: 'graos',
+    variantes: variantesPadrao(88.0, [false, false, false]),
+    moagem_opcoes: MOAGEM_OPCOES_PADRAO,
+    origem: 'Brasil',
+    fazenda: 'Carmo Coffees',
+    variedade: 'Catuaí Vermelho',
+    processo: 'Cereja Descascado',
+    torra: 'Média',
+    altitude: '1.150m',
+    safra: '2024',
+    preparos: [
+      {
+        metodo: 'Moka',
+        cafe: '18g',
+        agua: '150ml',
+        temperatura: '95°C',
+        moagem: 'Média-fina',
+        tempo: '4min a 5min'
+      }
+    ],
+    estoque: 0
+  },
+
+  // Moídos
+  {
+    id: 'cafe-9',
+    produtor_id: null,
+    nome: 'Café Pingado Bourbon Amarelo Moído 250g',
+    descricao: 'O mesmo Bourbon Amarelo premiado, já moído no ponto ideal para coado.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-moido.png',
+    ativo: true,
+    preco: 46.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'bourbon-amarelo-moido-250g',
+    formato: 'moido',
+    variantes: [{ id: '250g', peso: '250g', preco: 46.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 22
+  },
+  {
+    id: 'cafe-10',
+    produtor_id: null,
+    nome: 'Café Pingado Prensa Francesa Moagem Grossa 250g',
+    descricao: 'Moagem grossa pensada especialmente para prensa francesa, com corpo encorpado.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-moido.png',
+    ativo: true,
+    preco: 45.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'prensa-francesa-moagem-grossa-250g',
+    formato: 'moido',
+    variantes: [{ id: '250g', peso: '250g', preco: 45.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 19
+  },
+  {
+    id: 'cafe-11',
+    produtor_id: null,
+    nome: 'Café Pingado Espresso Moagem Fina 250g',
+    descricao: 'Moagem fina para espresso encorpado, com crema densa e persistente.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-graos-catuai.png',
+    ativo: true,
+    preco: 49.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'espresso-moagem-fina-250g',
+    formato: 'moido',
+    badge: 'Novo produtor',
+    variantes: [{ id: '250g', peso: '250g', preco: 49.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 30
+  },
+  {
+    id: 'cafe-12',
+    produtor_id: null,
+    nome: 'Café Pingado Coado Moagem Média 500g',
+    descricao: 'Moagem média equilibrada, ideal para filtros de papel e coadores permanentes.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-moido.png',
+    ativo: true,
+    preco: 74.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'coado-moagem-media-500g',
+    formato: 'moido',
+    variantes: [{ id: '500g', peso: '500g', preco: 74.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 14
+  },
+
+  // Drip Coffee
+  {
+    id: 'cafe-13',
+    produtor_id: null,
+    nome: 'Drip Coffee Pingado Mantiqueira Caixa 10un',
+    descricao: 'Sachês individuais de drip coffee com café da Mantiqueira de Minas, prontos para coar direto na xícara.',
+    regiao: 'Mantiqueira de Minas',
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-drip.png',
+    ativo: true,
+    preco: 59.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'drip-mantiqueira-10un',
+    formato: 'drip',
+    variantes: [{ id: '10un', peso: 'Caixa 10un', preco: 59.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 25
+  },
+  {
+    id: 'cafe-14',
+    produtor_id: null,
+    nome: 'Drip Coffee Pingado Frutado Caixa 10un',
+    descricao: 'Perfil frutado em sachês individuais, prático para o dia a dia sem abrir mão da qualidade.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-drip.png',
+    ativo: true,
+    preco: 62.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'drip-frutado-10un',
+    formato: 'drip',
+    badge: 'Novo produtor',
+    variantes: [{ id: '10un', peso: 'Caixa 10un', preco: 62.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 20
+  },
+  {
+    id: 'cafe-15',
+    produtor_id: null,
+    nome: 'Drip Coffee Pingado Intenso Caixa 20un',
+    descricao: 'Perfil intenso e encorpado em caixa econômica de 20 sachês individuais.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-drip.png',
+    ativo: true,
+    preco: 109.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'drip-intenso-20un',
+    formato: 'drip',
+    variantes: [{ id: '20un', peso: 'Caixa 20un', preco: 109.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 11
+  },
+  {
+    id: 'cafe-16',
+    produtor_id: null,
+    nome: 'Kit Degustação Drip Coffee 4 origens',
+    descricao: 'Kit com quatro sachês de drip coffee, um de cada origem, para conhecer perfis diferentes.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-drip.png',
+    ativo: true,
+    preco: 89.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'kit-degustacao-drip-4-origens',
+    formato: 'drip',
+    badge: 'Edição limitada',
+    variantes: [{ id: '4un', peso: 'Kit 4un', preco: 89.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 9
+  },
+
+  // Cápsulas
+  {
+    id: 'cafe-17',
+    produtor_id: null,
+    nome: 'Cápsulas Pingado Bourbon Caixa 10un',
+    descricao: 'Cápsulas de alumínio compatíveis com máquinas de espresso, com o perfil Bourbon Amarelo.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-capsulas.png',
+    ativo: true,
+    preco: 39.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'capsulas-bourbon-10un',
+    formato: 'capsula',
+    variantes: [{ id: '10un', peso: 'Caixa 10un', preco: 39.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 28
+  },
+  {
+    id: 'cafe-18',
+    produtor_id: null,
+    nome: 'Cápsulas Pingado Intenso Caixa 10un',
+    descricao: 'Cápsulas de perfil intenso, com corpo marcante e torra mais escura.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-capsulas.png',
+    ativo: true,
+    preco: 41.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'capsulas-intenso-10un',
+    formato: 'capsula',
+    variantes: [{ id: '10un', peso: 'Caixa 10un', preco: 41.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 17
+  },
+  {
+    id: 'cafe-19',
+    produtor_id: null,
+    nome: 'Cápsulas Pingado Descafeinado Caixa 10un',
+    descricao: 'Descafeinado com processo suave, mantendo aroma e sabor do café Pingado.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-capsulas.png',
+    ativo: true,
+    preco: 43.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'capsulas-descafeinado-10un',
+    formato: 'capsula',
+    badge: 'Novo produtor',
+    variantes: [{ id: '10un', peso: 'Caixa 10un', preco: 43.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 13
+  },
+  {
+    id: 'cafe-20',
+    produtor_id: null,
+    nome: 'Cápsulas Pingado Microlote Caixa 10un',
+    descricao: 'Edição limitada em cápsulas, com café de microlote raro selecionado pela curadoria.',
+    regiao: null,
+    score_sca: null,
+    acidez: null,
+    docura: null,
+    corpo: null,
+    amargor: null,
+    intensidade: null,
+    notas_sensoriais: null,
+    imagem_url: '/images/produto-microlote.png',
+    ativo: true,
+    preco: 58.90,
+    created_at: new Date().toISOString(),
+
+    slug: 'capsulas-microlote-10un',
+    formato: 'capsula',
+    badge: 'Edição limitada',
+    variantes: [{ id: '10un', peso: 'Caixa 10un', preco: 58.90, disponivel: true }],
+    origem: 'Brasil',
+    estoque: 6
   }
 ];

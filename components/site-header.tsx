@@ -8,11 +8,13 @@ import { Menu, Search, User, X, LogOut, CreditCard, ShoppingBag, Sliders } from 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/context/auth-context"
+import { useCart } from "@/context/cart-context"
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const { user, signOut } = useAuth()
+  const { itemCount } = useCart()
   const pathname = usePathname()
 
   const isProfileRoute = pathname?.startsWith('/perfil')
@@ -95,9 +97,24 @@ export function SiteHeader() {
           <Button variant="ghost" size="icon" aria-label="Buscar cafés">
             <Search />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
+          <Link
+            href="/carrinho"
+            aria-label={`Carrinho${itemCount > 0 ? `, ${itemCount} ${itemCount === 1 ? 'item' : 'itens'}` : ''}`}
+            className="relative inline-flex size-8 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            <ShoppingBag size={18} />
+            {itemCount > 0 && (
+              <span
+                aria-hidden="true"
+                className="absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground"
+              >
+                {itemCount > 99 ? '99+' : itemCount}
+              </span>
+            )}
+          </Link>
+          <Button
+            variant="ghost"
+            size="icon"
             aria-label="Minha conta"
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className={cn(dropdownOpen && "bg-muted")}

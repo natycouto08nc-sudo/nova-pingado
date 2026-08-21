@@ -32,6 +32,22 @@ export interface Produtor {
   created_at: string;
 }
 
+export interface CafeVariante {
+  id: string;
+  peso: string;
+  preco: number;
+  disponivel: boolean;
+}
+
+export interface PreparoRecomendado {
+  metodo: string;
+  cafe: string;
+  agua: string;
+  temperatura: string;
+  moagem: string;
+  tempo: string;
+}
+
 export interface Cafe {
   id: string;
   produtor_id: string | null;
@@ -50,6 +66,43 @@ export interface Cafe {
   preco: number | null;
   created_at: string;
   produtores?: Produtor;
+
+  /** Slug único usado na rota /loja/[slug]. */
+  slug: string;
+  /** Formato de venda, usado para agrupar produtos por aba na vitrine. Padrão: 'graos'. */
+  formato?: 'graos' | 'moido' | 'drip' | 'capsula';
+  /** Galeria de imagens; quando ausente, a PDP usa [imagem_url]. */
+  imagens?: string[];
+  badge?: string;
+  preco_original?: number | null;
+  variantes?: CafeVariante[];
+  /** Métodos de moagem aceitos; ausente = produto não permite escolher moagem. */
+  moagem_opcoes?: string[];
+  origem?: string | null;
+  fazenda?: string | null;
+  variedade?: string | null;
+  processo?: string | null;
+  torra?: string | null;
+  altitude?: string | null;
+  safra?: string | null;
+  preparos?: PreparoRecomendado[];
+  estoque?: number | null;
+  relacionados_ids?: string[];
+}
+
+export interface CarrinhoItem {
+  /** Chave única da linha: cafeId + varianteId + moagem. */
+  id: string;
+  cafeId: string;
+  slug: string;
+  nome: string;
+  imagem: string | null;
+  varianteId?: string;
+  varianteLabel?: string;
+  moagem?: string;
+  precoUnitario: number;
+  quantidade: number;
+  estoqueMaximo?: number | null;
 }
 
 export interface Favorito {
