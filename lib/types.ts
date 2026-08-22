@@ -4,7 +4,7 @@ export interface Perfil {
   email: string | null;
   telefone?: string | null;
   avatar_url: string | null;
-  role: 'user' | 'produtor' | 'admin';
+  role: 'cliente' | 'vendedor' | 'admin';
   created_at: string;
   updated_at: string;
 }

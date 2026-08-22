@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Fraunces, Inter } from 'next/font/google'
+import { Cormorant_Garamond, DM_Sans, Fraunces, Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/context/auth-context'
 import { CartProvider } from '@/context/cart-context'
@@ -14,6 +14,21 @@ const inter = Inter({
 const fraunces = Fraunces({
   subsets: ['latin'],
   variable: '--font-fraunces',
+  display: 'swap',
+})
+
+// Tipografia do CRM Pingado (login, painel do vendedor, admin, vitrine redesenhada).
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-dmsans',
+  display: 'swap',
+})
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-cormorant',
   display: 'swap',
 })
 
@@ -54,7 +69,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`bg-background ${inter.variable} ${fraunces.variable}`}
+      className={`bg-background ${inter.variable} ${fraunces.variable} ${dmSans.variable} ${cormorant.variable}`}
     >
       <body className="antialiased">
         <AuthProvider>
