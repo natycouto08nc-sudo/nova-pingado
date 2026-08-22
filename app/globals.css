@@ -6,6 +6,37 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-fraunces), Georgia, 'Times New Roman', serif;
 
+  /* Tipografia do CRM Pingado (design_handoff_crm_pingado) — não substitui font-sans/font-serif
+     para não afetar as telas existentes da vitrine/checkout. */
+  --font-pg-ui: var(--font-dmsans), ui-sans-serif, system-ui, sans-serif;
+  --font-pg-display: var(--font-cormorant), Georgia, 'Times New Roman', serif;
+
+  --color-pg-bg: var(--pg-bg);
+  --color-pg-surface: var(--pg-surface);
+  --color-pg-surface-alt: var(--pg-surface-alt);
+  --color-pg-field: var(--pg-field);
+  --color-pg-green: var(--pg-green);
+  --color-pg-green-dark: var(--pg-green-dark);
+  --color-pg-green-soft: var(--pg-green-soft);
+  --color-pg-green-soft-2: var(--pg-green-soft-2);
+  --color-pg-terracotta: var(--pg-terracotta);
+  --color-pg-terracotta-hover: var(--pg-terracotta-hover);
+  --color-pg-terracotta-text: var(--pg-terracotta-text);
+  --color-pg-cream: var(--pg-cream);
+  --color-pg-cream-2: var(--pg-cream-2);
+  --color-pg-text: var(--pg-text);
+  --color-pg-text-secondary: var(--pg-text-secondary);
+  --color-pg-text-tertiary: var(--pg-text-tertiary);
+  --color-pg-text-label: var(--pg-text-label);
+  --color-pg-success-bg: var(--pg-success-bg);
+  --color-pg-success-fg: var(--pg-success-fg);
+  --color-pg-warn-bg: var(--pg-warn-bg);
+  --color-pg-warn-fg: var(--pg-warn-fg);
+  --color-pg-error-bg: var(--pg-error-bg);
+  --color-pg-error-fg: var(--pg-error-fg);
+  --color-pg-accent-bg: var(--pg-accent-bg);
+  --color-pg-accent-fg: var(--pg-accent-fg);
+
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -66,6 +97,33 @@
   --input: #e2d4c1;
   --ring: #b5563c;
   --radius: 0.75rem;
+
+  /* Design tokens do CRM Pingado — hex exatos do handoff (design_handoff_crm_pingado/README.md). */
+  --pg-bg: #f3ede3;
+  --pg-surface: #faf6ef;
+  --pg-surface-alt: #f4eee3;
+  --pg-field: #fffdf8;
+  --pg-green: #1c2e23;
+  --pg-green-dark: #141f19;
+  --pg-green-soft: #2c4235;
+  --pg-green-soft-2: #22382b;
+  --pg-terracotta: #c0562b;
+  --pg-terracotta-hover: #9c4520;
+  --pg-terracotta-text: #a2542c;
+  --pg-cream: #ede6d9;
+  --pg-cream-2: #f6f1e6;
+  --pg-text: #23231f;
+  --pg-text-secondary: #7c7466;
+  --pg-text-tertiary: #9c8f7d;
+  --pg-text-label: #8a8175;
+  --pg-success-bg: #e4ede3;
+  --pg-success-fg: #3f6146;
+  --pg-warn-bg: #f1e5d9;
+  --pg-warn-fg: #8c5227;
+  --pg-error-bg: #f8edeb;
+  --pg-error-fg: #9b3a2c;
+  --pg-accent-bg: #f2e4d8;
+  --pg-accent-fg: #7c6555;
 }
 
 @layer base {
