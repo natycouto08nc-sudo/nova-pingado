@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Cormorant_Garamond, DM_Sans, Fraunces, Inter } from 'next/font/google'
+import { Cormorant_Garamond, DM_Sans, Fraunces, Inter, Playfair_Display, Poppins } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/context/auth-context'
 import { CartProvider } from '@/context/cart-context'
@@ -14,6 +14,20 @@ const inter = Inter({
 const fraunces = Fraunces({
   subsets: ['latin'],
   variable: '--font-fraunces',
+  display: 'swap',
+})
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-poppins',
+  display: 'swap',
+})
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-playfair',
   display: 'swap',
 })
 
@@ -58,7 +72,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: 'light',
-  themeColor: '#2F3B2A',
+  themeColor: '#4B270F',
 }
 
 export default function RootLayout({
@@ -69,7 +83,7 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`bg-background ${inter.variable} ${fraunces.variable} ${dmSans.variable} ${cormorant.variable}`}
+      className={`bg-background ${poppins.variable} ${playfair.variable} ${inter.variable} ${fraunces.variable} ${dmSans.variable} ${cormorant.variable}`}
     >
       <body className="antialiased">
         <AuthProvider>

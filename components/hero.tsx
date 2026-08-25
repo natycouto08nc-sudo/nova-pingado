@@ -17,7 +17,7 @@ export function Hero() {
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-r from-coffee/85 via-coffee/60 to-coffee/20"
+        className="absolute inset-0 bg-gradient-to-r from-coffee/90 via-coffee/65 to-coffee/25"
       />
 
       <div className="relative mx-auto flex min-h-[36rem] max-w-7xl flex-col justify-center px-4 py-24 md:min-h-[42rem] md:px-6 md:py-32">

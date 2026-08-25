@@ -3,8 +3,8 @@
 @import 'shadcn/tailwind.css';
 
 @theme inline {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-fraunces), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), Georgia, 'Times New Roman', serif;
 
   /* Tipografia do CRM Pingado (design_handoff_crm_pingado) — não substitui font-sans/font-serif
      para não afetar as telas existentes da vitrine/checkout. */
@@ -73,29 +73,29 @@
 :root {
   color-scheme: light;
 
-  --coffee: #2f3b2a;
-  --coffee-foreground: #f5ede3;
-  --gold: #c89b4a;
-  --gold-foreground: #2f3b2a;
+  --coffee: #4b270f;
+  --coffee-foreground: #fffaf1;
+  --gold: #f97216;
+  --gold-foreground: #4b270f;
 
-  --background: #f5ede3;
-  --foreground: #2f3b2a;
-  --card: #fcf8f2;
-  --card-foreground: #2f3b2a;
-  --popover: #fcf8f2;
-  --popover-foreground: #2f3b2a;
-  --primary: #b5563c;
-  --primary-foreground: #fcf8f2;
-  --secondary: #2f3b2a;
-  --secondary-foreground: #f5ede3;
-  --muted: #eadfd0;
-  --muted-foreground: #6f6656;
-  --accent: #c89b4a;
-  --accent-foreground: #2f3b2a;
-  --destructive: #9b2c1e;
-  --border: #e2d4c1;
-  --input: #e2d4c1;
-  --ring: #b5563c;
+  --background: #fffaf1;
+  --foreground: #4b270f;
+  --card: #fcfcf0;
+  --card-foreground: #4b270f;
+  --popover: #fcfcf0;
+  --popover-foreground: #4b270f;
+  --primary: #f97216;
+  --primary-foreground: #fffaf1;
+  --secondary: #4b270f;
+  --secondary-foreground: #fffaf1;
+  --muted: #fdecd9;
+  --muted-foreground: #765f4d;
+  --accent: #fdecd9;
+  --accent-foreground: #4b270f;
+  --destructive: #a8472b;
+  --border: #efd8c0;
+  --input: #e9cdb0;
+  --ring: #f97216;
   --radius: 0.75rem;
 
   /* Design tokens do CRM Pingado — hex exatos do handoff (design_handoff_crm_pingado/README.md). */

@@ -48,10 +48,10 @@ export function SiteFooter() {
   return (
     <footer className="bg-coffee text-coffee-foreground">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
-        <p className="text-center font-serif text-2xl tracking-[0.32em] md:text-3xl">
+        <p className="text-center font-serif text-2xl font-semibold tracking-[0.24em] text-gold md:text-3xl">
           PINGADO
         </p>
-        <p className="mt-3 text-center text-sm text-coffee-foreground/60">
+        <p className="mt-3 text-center text-sm text-coffee-foreground/70">
           Cafés especiais com nome, rosto e história.
         </p>
 
