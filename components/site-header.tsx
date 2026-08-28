@@ -39,7 +39,7 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-10 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 md:h-20 md:px-6">
         <div className="flex flex-1 items-center gap-1">
           <Button

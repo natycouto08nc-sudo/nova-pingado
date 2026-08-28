@@ -15,18 +15,32 @@ function extrasKey(produtorId: string) {
 export function useProdutosExtras(produtorId: string | null) {
   const [produtos, setProdutos] = useLocalStorageState<Cafe[]>(extrasKey(produtorId ?? 'nenhum'), []);
   const adicionar = (produto: Cafe) => setProdutos((cur) => [produto, ...cur]);
-  return { produtosExtras: produtos, adicionarProduto: adicionar };
+  const salvar = (produto: Cafe) => {
+    setProdutos((cur) => {
+      const idx = cur.findIndex((p) => p.id === produto.id);
+      if (idx !== -1) {
+        const next = [...cur];
+        next[idx] = produto;
+        return next;
+      } else {
+        return [produto, ...cur];
+      }
+    });
+  };
+  return { produtosExtras: produtos, adicionarProduto: adicionar, salvarProduto: salvar };
 }
 
 /** Dados agregados do vendedor logado: identidade, catálogo (seed + extras) e infos de rotatividade. */
 export function useVendedor() {
   const { user, sellerInfo } = useAuth();
   const produtorId = sellerInfo?.produtorId ?? null;
-  const { produtosExtras, adicionarProduto } = useProdutosExtras(produtorId);
+  const { produtosExtras, adicionarProduto, salvarProduto } = useProdutosExtras(produtorId);
 
   const meusProdutos = useMemo(() => {
     const base = produtorId ? catalogoDoProdutor(produtorId) : [];
-    return [...produtosExtras, ...base];
+    const extrasIds = new Set(produtosExtras.map((p) => p.id));
+    const baseFiltered = base.filter((p) => !extrasIds.has(p.id));
+    return [...produtosExtras, ...baseFiltered];
   }, [produtorId, produtosExtras]);
 
   const vendedorInfo: VendedorInfo = useMemo(() => {
@@ -50,7 +64,7 @@ export function useVendedor() {
   const nomeVendedor = user?.nome || 'Torrefação';
   const saudacaoNome = nomeVendedor.replace(/^(Torrefação|Torrefacao|Fazenda|Sítio|Sitio|Café|Cafe)\s+/i, '');
 
-  return { produtorId, nomeVendedor, saudacaoNome, meusProdutos, adicionarProduto, vendedorInfo, pedidos, historico, sellerInfo };
+  return { produtorId, nomeVendedor, saudacaoNome, meusProdutos, adicionarProduto, salvarProduto, vendedorInfo, pedidos, historico, sellerInfo };
 }
 
 const RESERVAS_KEY = 'pingado_reservas_status';

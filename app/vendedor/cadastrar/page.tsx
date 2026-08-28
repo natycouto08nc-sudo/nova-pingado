@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useVendedor } from '@/lib/pingado/vendedor-store';
 import { PgEyebrow, PgChip } from '@/components/pingado/ui';
 import {
@@ -27,7 +28,19 @@ function Field({ label, children, dark }: { label: string; children: React.React
 }
 
 export default function CadastrarCafePage() {
-  const { adicionarProduto, produtorId, nomeVendedor } = useVendedor();
+  return (
+    <Suspense fallback={<div className="p-8 text-pg-text-secondary font-semibold text-center font-pg-ui bg-pg-bg">Carregando formulário...</div>}>
+      <CadastrarCafeForm />
+    </Suspense>
+  );
+}
+
+function CadastrarCafeForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get('id');
+
+  const { meusProdutos, adicionarProduto, salvarProduto, produtorId, nomeVendedor } = useVendedor();
 
   const [nome, setNome] = useState('');
   const [categoria, setCategoria] = useState<(typeof CATEGORIAS_PRODUTO)[number]>('Grãos');
@@ -49,8 +62,58 @@ export default function CadastrarCafePage() {
   const [notas, setNotas] = useState<string[]>(['Frutas Vermelhas', 'Mel']);
   const [metodos, setMetodos] = useState<string[]>(['Em grãos', 'V60']);
   const [descricao, setDescricao] = useState('');
+  const [imagemUrl, setImagemUrl] = useState<string | null>(null);
 
   const [salvo, setSalvo] = useState('');
+
+  const editProduct = useMemo(() => {
+    if (!editId) return null;
+    return meusProdutos.find((p) => p.id === editId) || null;
+  }, [editId, meusProdutos]);
+
+  useEffect(() => {
+    if (editProduct) {
+      setNome(editProduct.nome || '');
+      const catKey = Object.keys(CATEGORIA_TO_FORMATO).find(k => CATEGORIA_TO_FORMATO[k] === editProduct.formato) || 'Grãos';
+      setCategoria(catKey as typeof CATEGORIAS_PRODUTO[number]);
+      setPreco(editProduct.preco != null ? String(editProduct.preco).replace('.', ',') : '79,00');
+      setEstoque(editProduct.estoque != null ? String(editProduct.estoque) : '120');
+      const altRaw = editProduct.altitude || '';
+      setAltitude(altRaw.endsWith('m') ? altRaw.slice(0, -1) : altRaw);
+      setProdutor(editProduct.fazenda || '');
+      setRegiao(editProduct.regiao || '');
+      setVariedade(editProduct.variedade || '');
+      setProcesso(editProduct.processo || 'Honey');
+      setTorra(editProduct.torra || 'Média');
+      setSca(editProduct.score_sca != null ? String(editProduct.score_sca) : '');
+      setSens({
+        acidez: editProduct.acidez ?? 3,
+        docura: editProduct.docura ?? 3,
+        corpo: editProduct.corpo ?? 3,
+        amargor: editProduct.amargor ?? 3,
+        intensidade: editProduct.intensidade ?? 3,
+      });
+      setNotas(editProduct.notas_sensoriais || []);
+      setMetodos(editProduct.moagem_opcoes || []);
+      setDescricao(editProduct.descricao || '');
+      setImagemUrl(editProduct.imagem_url || null);
+    }
+  }, [editProduct]);
+
+  const handleUploadClick = () => {
+    document.getElementById('photo-upload')?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagemUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const toggle = (arr: string[], set: (v: string[]) => void, v: string, max?: number) => {
     if (arr.includes(v)) return set(arr.filter((x) => x !== v));
@@ -73,28 +136,59 @@ export default function CadastrarCafePage() {
 
   const publicar = () => {
     if (!produtorId) return;
-    const id = 'own-' + Math.random().toString(36).slice(2, 10);
-    const slug = nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || id;
+    const isEditing = !!editId;
+    const finalId = isEditing ? editId : 'own-' + Math.random().toString(36).slice(2, 10);
+    const slug = nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || finalId;
     const novo: Cafe = {
-      id, produtor_id: produtorId, nome: nome || 'Novo café', descricao: descricao || null,
+      id: finalId, produtor_id: produtorId, nome: nome || 'Novo café', descricao: descricao || null,
       regiao: regiao || null, score_sca: sca ? Number(sca) : null,
       acidez: sens.acidez, docura: sens.docura, corpo: sens.corpo, amargor: sens.amargor, intensidade: sens.intensidade,
-      notas_sensoriais: notas.length ? notas : null, imagem_url: null, ativo: true, preco: precoNum,
+      notas_sensoriais: notas.length ? notas : null, imagem_url: imagemUrl, ativo: true, preco: precoNum,
       created_at: new Date().toISOString(), produtores: undefined,
       slug, formato: CATEGORIA_TO_FORMATO[categoria], variantes: tamanhos.map((t) => ({ id: t, peso: t, preco: precoNum, disponivel: true })),
       moagem_opcoes: metodos, origem: 'Brasil', fazenda: produtor || nomeVendedor, variedade: variedade || null,
       processo: processo || null, torra: torra || null, altitude: altitude ? `${altitude}m` : null, safra: String(new Date().getFullYear()),
       estoque: Number(estoque) || 0,
     };
-    adicionarProduto(novo);
-    setSalvo('Enviado para curadoria · publicado na vitrine em até 2h.');
+    if (isEditing) {
+      salvarProduto(novo);
+    } else {
+      adicionarProduto(novo);
+    }
+    router.push('/vendedor/produtos');
+  };
+
+  const salvarRascunho = () => {
+    if (!produtorId) return;
+    const isEditing = !!editId;
+    const finalId = isEditing ? editId : 'own-' + Math.random().toString(36).slice(2, 10);
+    const slug = nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || finalId;
+    const novo: Cafe = {
+      id: finalId, produtor_id: produtorId, nome: nome || 'Novo rascunho', descricao: descricao || null,
+      regiao: regiao || null, score_sca: sca ? Number(sca) : null,
+      acidez: sens.acidez, docura: sens.docura, corpo: sens.corpo, amargor: sens.amargor, intensidade: sens.intensidade,
+      notas_sensoriais: notas.length ? notas : null, imagem_url: imagemUrl, ativo: false, preco: precoNum,
+      created_at: new Date().toISOString(), produtores: undefined,
+      slug, formato: CATEGORIA_TO_FORMATO[categoria], variantes: tamanhos.map((t) => ({ id: t, peso: t, preco: precoNum, disponivel: true })),
+      moagem_opcoes: metodos, origem: 'Brasil', fazenda: produtor || nomeVendedor, variedade: variedade || null,
+      processo: processo || null, torra: torra || null, altitude: altitude ? `${altitude}m` : null, safra: String(new Date().getFullYear()),
+      estoque: Number(estoque) || 0,
+    };
+    if (isEditing) {
+      salvarProduto(novo);
+    } else {
+      adicionarProduto(novo);
+    }
+    router.push('/vendedor/produtos');
   };
 
   return (
     <div>
       <div className="mb-[22px]">
-        <PgEyebrow>Novo produto</PgEyebrow>
-        <h1 className="font-pg-display font-medium text-[34px] m-0 text-pg-green">Cadastrar café</h1>
+        <PgEyebrow>{editId ? 'Editar produto' : 'Novo produto'}</PgEyebrow>
+        <h1 className="font-pg-display font-medium text-[34px] m-0 text-pg-green">
+          {editId ? 'Editar café' : 'Cadastrar café'}
+        </h1>
         <p className="mt-2 text-[13.5px] text-pg-text-secondary max-w-[62ch]">
           O perfil sensorial usa a mesma escala do quiz de onboarding do cliente — é o que permite à IA cruzar seu café com o paladar de cada assinante.
         </p>
@@ -129,10 +223,34 @@ export default function CadastrarCafePage() {
             <div className="mt-4">
               <div className="text-[10px] tracking-[.12em] uppercase text-pg-text-label mb-2">Fotos do produto · a primeira vira a capa na vitrine</div>
               <div className="flex gap-[10px]">
-                <div className="w-[78px] h-24 border border-dashed border-[rgba(28,46,35,.28)] rounded-[2px] bg-pg-surface-alt flex items-center justify-center text-[9px] tracking-[.08em] text-[#A79A88] text-center px-1.5">ARRASTE<br />A FOTO</div>
+                {imagemUrl ? (
+                  <div 
+                    onClick={handleUploadClick}
+                    className="w-[78px] h-24 border border-dashed border-[rgba(28,46,35,.28)] rounded-[2px] bg-cover bg-center cursor-pointer relative group"
+                    style={{ backgroundImage: `url(${imagemUrl})` }}
+                  >
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity rounded-[2px]">
+                      <span className="text-[9px] text-white tracking-[.08em]">ALTERAR</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div 
+                    onClick={handleUploadClick}
+                    className="w-[78px] h-24 border border-dashed border-[rgba(28,46,35,.28)] rounded-[2px] bg-pg-surface-alt flex items-center justify-center text-[9px] tracking-[.08em] text-[#A79A88] text-center px-1.5 cursor-pointer hover:border-pg-terracotta hover:text-pg-terracotta transition-colors"
+                  >
+                    ENVIAR<br />FOTO
+                  </div>
+                )}
                 <div className="w-[78px] h-24 border border-dashed border-[rgba(28,46,35,.22)] rounded-[2px] bg-pg-surface-alt" />
                 <div className="w-[78px] h-24 border border-dashed border-[rgba(28,46,35,.22)] rounded-[2px] bg-pg-surface-alt" />
               </div>
+              <input
+                id="photo-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
             </div>
           </div>
 
@@ -213,7 +331,7 @@ export default function CadastrarCafePage() {
             <button onClick={publicar} className="cursor-pointer border-0 bg-pg-terracotta hover:bg-pg-terracotta-hover text-white text-[13px] px-[26px] py-[13px] rounded-[3px] transition-colors">
               Publicar na vitrine e enviar para curadoria
             </button>
-            <button type="button" onClick={() => setSalvo('Rascunho salvo localmente.')} className="cursor-pointer border border-[rgba(28,46,35,.22)] bg-transparent text-[#3C4A3E] text-[13px] px-[22px] py-[13px] rounded-[3px]">
+            <button type="button" onClick={salvarRascunho} className="cursor-pointer border border-[rgba(28,46,35,.22)] bg-transparent text-[#3C4A3E] text-[13px] px-[22px] py-[13px] rounded-[3px]">
               Salvar rascunho
             </button>
             {salvo && <span className="text-xs text-[#4E7A55]">{salvo}</span>}
@@ -222,7 +340,11 @@ export default function CadastrarCafePage() {
 
         <div className="sticky top-7 flex flex-col gap-[14px]">
           <div className="bg-pg-surface border border-[rgba(28,46,35,.10)] rounded-[3px] overflow-hidden">
-            <div className="h-[150px] bg-[#E7DFD1] flex items-center justify-center text-[9px] tracking-[.1em] text-[#A79A88]">PRÉVIA NA VITRINE</div>
+            {imagemUrl ? (
+              <div className="h-[150px] bg-cover bg-center" style={{ backgroundImage: `url(${imagemUrl})` }} />
+            ) : (
+              <div className="h-[150px] bg-[#E7DFD1] flex items-center justify-center text-[9px] tracking-[.1em] text-[#A79A88]">PRÉVIA NA VITRINE</div>
+            )}
             <div className="px-[18px] pt-4 pb-[18px]">
               <div className="text-[9px] tracking-[.16em] uppercase text-pg-text-tertiary">Cafés especiais · {categoria}</div>
               <div className="font-pg-display text-[23px] text-pg-green mt-[6px]">{nome || 'Nome do café'}</div>

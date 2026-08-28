@@ -30,6 +30,7 @@ interface DbUser {
   password: string;
   nome: string;
   telefone?: string;
+  apelido?: string;
   role: PapelUsuario;
   sellerInfo?: SellerInfo;
 }
@@ -50,14 +51,14 @@ interface AuthContextType {
   sellerInfo: SellerInfo | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
-  signUp: (email: string, password: string, nome: string, telefone: string) => Promise<{ success: boolean; message?: string }>;
+  signUp: (email: string, password: string, nome: string, telefone: string, apelido?: string) => Promise<{ success: boolean; message?: string }>;
   signInBypass: () => Promise<void>;
   signOut: () => Promise<void>;
   savePerfilSensorial: (valores: { acidez: number; docura: number; corpo: number; amargor: number; intensidade: number }, preferencias: string[]) => Promise<void>;
   saveAssinatura: (plano: 'basico' | 'premium' | 'plus') => Promise<void>;
   updateAssinaturaStatus: (status: 'ativa' | 'pausada' | 'cancelada') => Promise<void>;
   changeAssinaturaPlano: (plano: 'basico' | 'premium' | 'plus') => Promise<void>;
-  savePerfilDados: (nome: string, telefone: string) => Promise<void>;
+  savePerfilDados: (nome: string, telefone: string, apelido?: string) => Promise<void>;
   getRecomendados: () => CafeComCompatibilidade[];
 
   // CRM Pingado — login multi-papel, cadastro em passos e magic link (mockados).
@@ -67,6 +68,7 @@ interface AuthContextType {
   cadastrarCliente: (dados: {
     nome: string; email: string; senha: string | null;
     quiz: SensoryValues; restricoes: string[]; plano: PlanoAssinatura;
+    apelido?: string;
   }) => Promise<{ success: boolean; message?: string; perfilNome?: string }>;
   cadastrarVendedor: (dados: {
     nome: string; email: string; senha: string | null;
@@ -145,12 +147,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const matchedUser = dbUsers.find((u) => u.id === userId);
     const papelFinal: PapelUsuario = papel ?? matchedUser?.role ?? 'cliente';
 
-    if (!savedPerfis[userId] || savedPerfis[userId].role !== papelFinal) {
+    if (!savedPerfis[userId] || savedPerfis[userId].role !== papelFinal || matchedUser?.apelido !== savedPerfis[userId].apelido) {
       savedPerfis[userId] = {
         id: userId,
         nome,
         email,
         telefone: matchedUser?.telefone || null,
+        apelido: matchedUser?.apelido || savedPerfis[userId]?.apelido || null,
         avatar_url: null,
         role: papelFinal,
         created_at: savedPerfis[userId]?.created_at || new Date().toISOString(),
@@ -188,7 +191,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { success: true };
   };
 
-  const signUp = async (email: string, password: string, nome: string, telefone: string) => {
+  const signUp = async (email: string, password: string, nome: string, telefone: string, apelido?: string) => {
     const dbUsers = readDb();
     const emailExists = dbUsers.some((u) => u.email.toLowerCase() === email.toLowerCase());
 
@@ -196,7 +199,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { success: false, message: 'Já existe uma conta cadastrada com este e-mail.' };
     }
 
-    const newUser: DbUser = { id: idFor('usr'), email, password, nome, telefone, role: 'cliente' };
+    const newUser: DbUser = { id: idFor('usr'), email, password, nome, telefone, apelido: apelido ?? '', role: 'cliente' };
     dbUsers.push(newUser);
     writeDb(dbUsers);
     startSession(newUser);
@@ -238,6 +241,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       savedAssinaturas[bypassUser.id] = defaultAssinatura;
       localStorage.setItem('pingado_assinaturas', JSON.stringify(savedAssinaturas));
       setAssinatura(defaultAssinatura);
+    }
+
+    const comprasChave = `pingado_compras_${bypassUser.id}`;
+    if (!localStorage.getItem(comprasChave)) {
+      const defaultCompras = [
+        {
+          id: 'compra-1',
+          codigo: '#PG-9482',
+          data: '14/08/2026',
+          item: '1x Microlote Geisha (250g)',
+          precoCafe: 'R$ 145,00',
+          frete: 'Grátis',
+          total: 'R$ 145,00',
+          metodo: 'PIX',
+          status: 'Em transporte',
+          statusColor: 'bg-blue-100/50 text-blue-800 border-blue-200',
+          detalhes: 'Seu pacote de Microlote Geisha foi coletado pela transportadora parceira e está a caminho da sua residência. Código de Rastreio: BR829302839LP.'
+        },
+        {
+          id: 'compra-2',
+          codigo: '#PG-9281',
+          data: '05/08/2026',
+          item: '1x Sweet Collection (250g)',
+          precoCafe: 'R$ 72,00',
+          frete: 'R$ 12,00',
+          total: 'R$ 84,00',
+          metodo: 'Cartão de Crédito',
+          status: 'Entregue',
+          statusColor: 'bg-green-100/50 text-green-800 border-green-200',
+          detalhes: 'Pedido entregue com sucesso no dia 05/08/2026 às 15:42. Assinado por: LUIZ A.'
+        }
+      ];
+      localStorage.setItem(comprasChave, JSON.stringify(defaultCompras));
     }
   };
 
@@ -317,13 +353,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setAssinatura(updated);
   };
 
-  const savePerfilDados = async (nome: string, telefone: string) => {
+  const savePerfilDados = async (nome: string, telefone: string, apelido?: string) => {
     if (!user || !perfil) return;
-    const updatedPerfil = { ...perfil, nome, telefone, updated_at: new Date().toISOString() };
+    const updatedPerfil = { ...perfil, nome, telefone, apelido: apelido ?? perfil.apelido, updated_at: new Date().toISOString() };
     const savedPerfis = JSON.parse(localStorage.getItem('pingado_perfis') || '{}');
     savedPerfis[user.id] = updatedPerfil;
     localStorage.setItem('pingado_perfis', JSON.stringify(savedPerfis));
     setPerfil(updatedPerfil);
+
+    const dbUsers = readDb();
+    const matchedIdx = dbUsers.findIndex((u) => u.id === user.id);
+    if (matchedIdx !== -1) {
+      dbUsers[matchedIdx].nome = nome;
+      dbUsers[matchedIdx].telefone = telefone;
+      if (apelido !== undefined) dbUsers[matchedIdx].apelido = apelido;
+      writeDb(dbUsers);
+    }
+
     const updatedUser = { ...user, nome };
     setUser(updatedUser);
     const raw = localStorage.getItem('pingado_active_session');
@@ -419,7 +465,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { success: true, role: matched.role };
   };
 
-  const cadastrarCliente: AuthContextType['cadastrarCliente'] = async ({ nome, email, senha, quiz, restricoes, plano }) => {
+  const cadastrarCliente: AuthContextType['cadastrarCliente'] = async ({ nome, email, senha, quiz, restricoes, plano, apelido }) => {
     if (!nome.trim()) return { success: false, message: 'Informe seu nome.' };
     if (!email.includes('@')) return { success: false, message: 'Digite um e-mail válido.' };
     if (senha != null && senha.length < 6) return { success: false, message: 'A senha precisa de pelo menos 6 caracteres.' };
@@ -429,7 +475,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { success: false, message: 'Já existe uma conta cadastrada com este e-mail.' };
     }
 
-    const novo: DbUser = { id: idFor('usr'), email, password: senha ?? '', nome, role: 'cliente' };
+    const novo: DbUser = { id: idFor('usr'), email, password: senha ?? '', nome, apelido: apelido ?? '', role: 'cliente' };
     dbUsers.push(novo); writeDb(dbUsers);
     startSession(novo);
 

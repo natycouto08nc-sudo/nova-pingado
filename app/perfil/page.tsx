@@ -39,7 +39,21 @@ export default function PerfilPage() {
   
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
+  const [apelido, setApelido] = useState('');
   const [saving, setSaving] = useState(false);
+  const [totalCompras, setTotalCompras] = useState(0);
+
+  useEffect(() => {
+    if (user) {
+      try {
+        const key = `pingado_compras_${user.id}`;
+        const items = JSON.parse(localStorage.getItem(key) || '[]');
+        setTotalCompras(items.length);
+      } catch (e) {
+        console.error('Erro ao ler compras do localStorage:', e);
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -51,6 +65,7 @@ export default function PerfilPage() {
     if (perfil) {
       setNome(perfil.nome || '');
       setTelefone(perfil.telefone || '');
+      setApelido(perfil.apelido || '');
     }
   }, [perfil]);
 
@@ -58,7 +73,7 @@ export default function PerfilPage() {
     e.preventDefault();
     if (!nome.trim()) return;
     setSaving(true);
-    await savePerfilDados(nome, telefone);
+    await savePerfilDados(nome, telefone, apelido);
     setSaving(false);
   };
 
@@ -179,7 +194,7 @@ export default function PerfilPage() {
                   </p>
                   
                   <div className="mt-4 bg-background/50 p-4 rounded-xl border border-border/40 text-xs font-semibold text-muted-foreground font-sans">
-                    Você possui <strong className="text-foreground">2 compras avulsas</strong> finalizadas em seu histórico.
+                    Você possui <strong className="text-foreground">{totalCompras} {totalCompras === 1 ? 'compra avulsa' : 'compras avulsas'}</strong> {totalCompras === 1 ? 'finalizada' : 'finalizadas'} em seu histórico.
                   </div>
                 </div>
 
@@ -208,8 +223,17 @@ export default function PerfilPage() {
                       <input
                         type="text"
                         value={nome}
-                        onChange={e => setNome(e.target.value)}
-                        placeholder="Seu nome"
+                        disabled
+                        className="w-full px-4 py-3 rounded-xl border border-border/60 bg-muted/40 text-muted-foreground cursor-not-allowed font-semibold"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Apelido</label>
+                      <input
+                        type="text"
+                        value={apelido}
+                        onChange={e => setApelido(e.target.value)}
+                        placeholder="Seu apelido"
                         className="w-full px-4 py-3 rounded-xl border border-border/80 bg-white text-[#2f3b2a] focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition font-semibold"
                       />
                     </div>
@@ -223,7 +247,7 @@ export default function PerfilPage() {
                         className="w-full px-4 py-3 rounded-xl border border-border/80 bg-white text-[#2f3b2a] focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition font-semibold"
                       />
                     </div>
-                    <div className="sm:col-span-2">
+                    <div>
                       <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Email</label>
                       <input
                         type="email"
@@ -266,14 +290,26 @@ export default function PerfilPage() {
                   {perfilSensorial ? (
                     <div className="space-y-4">
                       {/* Descrição Detalhada em Texto */}
-                      <div className="bg-background/50 p-4 rounded-xl border border-border/40 space-y-1 font-sans mb-4">
-                        <span className="text-[10px] text-primary font-bold uppercase tracking-wider block">Classificação IA</span>
-                        <h4 className="font-serif text-sm font-bold text-foreground">
-                          {obterPerfilDescricao(perfilSensorial).nome}
-                        </h4>
-                        <p className="text-[11px] text-muted-foreground leading-relaxed">
-                          {obterPerfilDescricao(perfilSensorial).detalhes}
-                        </p>
+                      <div className="bg-background/50 p-4 rounded-xl border border-border/40 font-sans mb-4">
+                        <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+                          <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary/20 flex-shrink-0">
+                            <Image
+                              src="/images/persona_coffee_lover.jpg"
+                              alt="Persona do Perfil Sensorial"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="space-y-1 flex-1 text-center sm:text-left">
+                            <span className="text-[10px] text-primary font-bold uppercase tracking-wider block">Classificação IA</span>
+                            <h4 className="font-serif text-sm font-bold text-foreground">
+                              {obterPerfilDescricao(perfilSensorial).nome}
+                            </h4>
+                            <p className="text-[11px] text-muted-foreground leading-relaxed">
+                              {obterPerfilDescricao(perfilSensorial).detalhes}
+                            </p>
+                          </div>
+                        </div>
                       </div>
 
                       {ATRIBUTOS.map(({ key, label }) => (
@@ -345,9 +381,10 @@ export default function PerfilPage() {
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {recomendados.slice(0, 3).map((cafe) => (
-                  <div 
+                  <Link 
                     key={cafe.id} 
-                    className="bg-card text-card-foreground rounded-2xl overflow-hidden shadow-md border border-border/40 flex flex-col h-full hover:shadow-lg transition-shadow"
+                    href={`/loja/${cafe.slug}`}
+                    className="bg-card text-card-foreground rounded-2xl overflow-hidden shadow-md border border-border/40 flex flex-col h-full hover:shadow-lg transition-all hover:-translate-y-1 duration-300 cursor-pointer group"
                   >
                     {/* Header da Imagem */}
                     <div className="relative aspect-[4/3] bg-muted/20">
@@ -394,7 +431,7 @@ export default function PerfilPage() {
                           <div className="flex flex-wrap gap-1.5 pt-1">
                             {cafe.notas_sensoriais.slice(0, 3).map(nota => (
                               <span key={nota} className="text-[10px] bg-muted/40 border border-border/80 text-foreground px-2.5 py-1 rounded-full font-medium font-sans">
-                                {nota}
+                                  {nota}
                               </span>
                             ))}
                           </div>
@@ -408,7 +445,7 @@ export default function PerfilPage() {
                         </p>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

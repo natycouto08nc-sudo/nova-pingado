@@ -21,7 +21,7 @@ export function AnnouncementBar() {
   const current = messages[index]
 
   return (
-    <div className="sticky top-0 z-50 bg-coffee text-coffee-foreground">
+    <div className="bg-coffee text-coffee-foreground">
       <div
         className="mx-auto flex h-10 max-w-7xl items-center justify-center gap-2 px-4 text-center"
         aria-live="polite"

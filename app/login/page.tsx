@@ -104,6 +104,7 @@ export default function LoginPage() {
 
   const [contaTipo, setContaTipo] = useState<ContaTipo>('cliente');
   const [contaNome, setContaNome] = useState('');
+  const [contaApelido, setContaApelido] = useState('');
   const [contaSenha, setContaSenha] = useState('');
   const [semSenha, setSemSenha] = useState(false);
   const [contaPlano, setContaPlano] = useState<PlanoAssinatura>('Descoberta');
@@ -178,7 +179,7 @@ export default function LoginPage() {
   const handleEntrarConta = async () => {
     setLoading(true);
     if (contaTipo === 'cliente') {
-      const res = await cadastrarCliente({ nome: contaNome, email, senha: semSenha ? null : contaSenha, quiz, restricoes: quizRestricoes, plano: contaPlano });
+      const res = await cadastrarCliente({ nome: contaNome, email, senha: semSenha ? null : contaSenha, quiz, restricoes: quizRestricoes, plano: contaPlano, apelido: contaApelido });
       setLoading(false);
       if (!res.success) { setErro(res.message || 'Erro ao criar conta.'); setPasso('cadastro'); return; }
       router.push('/loja');
@@ -336,9 +337,14 @@ export default function LoginPage() {
                   );
                 })}
               </div>
-              <Field label={contaTipo === 'vendedor' ? 'Nome da torrefação' : 'Nome'}>
+              <Field label={contaTipo === 'vendedor' ? 'Nome da torrefação' : 'Nome completo'}>
                 <input className={inputCls} value={contaNome} onChange={(e) => { setContaNome(e.target.value); setErro(''); }} placeholder={contaTipo === 'vendedor' ? 'Torrefação Serra Alta' : 'Marina Prado'} />
               </Field>
+              {contaTipo === 'cliente' && (
+                <Field label="Apelido">
+                  <input className={inputCls} value={contaApelido} onChange={(e) => { setContaApelido(e.target.value); setErro(''); }} placeholder="Como quer ser chamado (ex: Mari)" />
+                </Field>
+              )}
               <Field label="E-mail">
                 <input className={inputCls} value={email} onChange={(e) => { setEmail(e.target.value); setErro(''); }} placeholder="pingado@email.com" />
               </Field>

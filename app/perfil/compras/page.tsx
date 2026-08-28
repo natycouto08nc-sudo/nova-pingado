@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ShoppingBag, ArrowLeft, ExternalLink, Calendar, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -41,11 +41,25 @@ export default function ComprasDetalhesPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
+  const [compras, setCompras] = useState<any[]>([]);
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
+
+  useEffect(() => {
+    if (user) {
+      try {
+        const key = `pingado_compras_${user.id}`;
+        const items = JSON.parse(localStorage.getItem(key) || '[]');
+        setCompras(items);
+      } catch (e) {
+        console.error('Erro ao ler compras do localStorage:', e);
+      }
+    }
+  }, [user]);
 
   if (loading || !user) {
     return (
@@ -86,11 +100,28 @@ export default function ComprasDetalhesPage() {
 
           {/* Lista de Compras */}
           <div className="space-y-6">
-            {MOCK_COMPRAS.map((compra) => (
-              <div 
-                key={compra.id} 
-                className="bg-card text-card-foreground rounded-2xl p-6 shadow-md border border-border/40 space-y-4"
-              >
+            {compras.length === 0 ? (
+              <div className="bg-card text-card-foreground rounded-2xl p-8 shadow-md border border-border/40 text-center space-y-4 font-sans">
+                <div className="w-16 h-16 bg-muted/40 rounded-full flex items-center justify-center mx-auto text-muted-foreground">
+                  <ShoppingBag size={28} />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-serif text-lg font-bold">Nenhuma compra avulsa</h3>
+                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">Você ainda não realizou compras individuais na loja. Visite nosso catálogo e descubra cafés incríveis.</p>
+                </div>
+                <Link 
+                  href="/loja" 
+                  className="inline-flex items-center gap-2 bg-primary hover:bg-primary/95 text-white font-bold text-xs px-6 py-3 rounded-full shadow transition-all font-sans"
+                >
+                  Ir para a Loja
+                </Link>
+              </div>
+            ) : (
+              compras.map((compra) => (
+                <div 
+                  key={compra.id} 
+                  className="bg-card text-card-foreground rounded-2xl p-6 shadow-md border border-border/40 space-y-4"
+                >
                 {/* Cabeçalho do Pedido */}
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 pb-3 font-sans">
                   <div className="flex items-center gap-3">
@@ -135,7 +166,7 @@ export default function ComprasDetalhesPage() {
                   </div>
                 </div>
               </div>
-            ))}
+            )))}
 
             {/* Suporte */}
             <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-center justify-between gap-4 font-sans text-xs">

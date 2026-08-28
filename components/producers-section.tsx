@@ -1,5 +1,7 @@
 import Image from "next/image"
 
+import Link from "next/link"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
@@ -89,7 +91,7 @@ export function ProducersSection() {
           <Button
             variant="outline"
             className="h-11 px-6"
-            render={<a href="#produtos" />}
+            render={<Link href="/produtores" />}
           >
             Conhecer todos os produtores
           </Button>

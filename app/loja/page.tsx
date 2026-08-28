@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { MOCK_CAFES } from '@/lib/coffees';
-import { PgClienteHeader } from '@/components/pingado/cliente-header';
+import { SiteHeader } from '@/components/site-header';
 import { PgEyebrow } from '@/components/pingado/ui';
 import { matchPct, cafeSensoryValues, melhorPerfilPara } from '@/lib/pingado/selection';
 import { REFERENCE_PROFILES, getReferenceProfile } from '@/lib/pingado/profiles';
@@ -57,7 +57,7 @@ export default function LojaPage() {
 
   return (
     <div className="min-h-screen bg-pg-bg font-pg-ui">
-      <PgClienteHeader />
+      <SiteHeader />
 
       <div className="px-[38px] py-[34px] pb-[60px]">
         <div className="flex items-end justify-between gap-6 mb-[22px]">

@@ -63,7 +63,7 @@ const PLANOS_INFO = {
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { user, signUp, savePerfilSensorial, saveAssinatura } = useAuth();
+  const { user, perfilSensorial, signUp, savePerfilSensorial, saveAssinatura } = useAuth();
 
   const [step, setStep] = useState(0);
   const [valores, setValores] = useState<Record<AtributoKey, number>>({
@@ -75,6 +75,8 @@ export default function OnboardingPage() {
 
   // Estados do Passo Cadastro
   const [cadNome, setCadNome] = useState('');
+  const [cadApelido, setCadApelido] = useState('');
+  const [hasInitialized, setHasInitialized] = useState(false);
   const [cadEmail, setCadEmail] = useState('');
   const [cadTelefone, setCadTelefone] = useState('');
   const [cadSenha, setCadSenha] = useState('');
@@ -89,6 +91,23 @@ export default function OnboardingPage() {
       setSelectedPlan(savedPlan);
     }
   }, []);
+
+  useEffect(() => {
+    if (user && perfilSensorial && !hasInitialized) {
+      setValores({
+        acidez: perfilSensorial.acidez,
+        docura: perfilSensorial.docura,
+        corpo: perfilSensorial.corpo,
+        amargor: perfilSensorial.amargor,
+        intensidade: perfilSensorial.intensidade,
+      });
+      if (perfilSensorial.preferencias) {
+        setPreferencias(perfilSensorial.preferencias);
+      }
+      setStep(ATRIBUTOS.length + 1); // Go straight to profile result
+      setHasInitialized(true);
+    }
+  }, [user, perfilSensorial, hasInitialized]);
 
   const totalSteps = ATRIBUTOS.length + 4; // 5 atributos + 1 preferências + 1 resultado perfil + 1 cadastro + 1 checkout/assinatura
 
@@ -125,7 +144,7 @@ export default function OnboardingPage() {
     }
 
     try {
-      const res = await signUp(cadEmail, cadSenha, cadNome, cadTelefone);
+      const res = await signUp(cadEmail, cadSenha, cadNome, cadTelefone, cadApelido);
       if (!res.success) {
         setErrorMsg(res.message || 'Erro ao criar conta.');
         setSaving(false);
@@ -348,23 +367,60 @@ export default function OnboardingPage() {
                       </div>
                     ))}
                   </div>
+
+                  {/* Opções de Edição */}
+                  <div className="pt-4 border-t border-[#4a2c2a]/10 flex flex-col sm:flex-row gap-3 justify-between items-center text-xs font-sans">
+                    <button
+                      type="button"
+                      onClick={() => setStep(0)}
+                      className="text-[#bf5a36] hover:underline font-bold"
+                    >
+                      Refazer Quiz Completo
+                    </button>
+                    <Link
+                      href="/perfil/sensorial"
+                      className="text-[#6b5b58] hover:text-[#bf5a36] hover:underline font-bold"
+                    >
+                      Ajuste Fino dos Atributos
+                    </Link>
+                  </div>
                 </div>
 
-                <div className="bg-white/10 p-5 rounded-2xl border border-white/20 text-sm">
-                  <p className="font-bold text-[#e29b63]">Salvar perfil e assinar</p>
-                  <p className="text-xs text-gray-200 mt-1 leading-relaxed">
-                    Para salvar este perfil na nuvem e configurar a assinatura dos seus cafés personalizados do clube, você precisará criar uma conta a seguir.
-                  </p>
-                </div>
+                {user ? (
+                  <div className="bg-white/10 p-5 rounded-2xl border border-white/20 text-sm">
+                    <p className="font-bold text-[#e29b63]">Salvar perfil e assinar</p>
+                    <p className="text-xs text-gray-200 mt-1 leading-relaxed">
+                      Seu perfil sensorial será atualizado em sua conta e utilizaremos esses dados para selecionar os cafés da sua assinatura.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-white/10 p-5 rounded-2xl border border-white/20 text-sm">
+                    <p className="font-bold text-[#e29b63]">Salvar perfil e assinar</p>
+                    <p className="text-xs text-gray-200 mt-1 leading-relaxed">
+                      Para salvar este perfil na nuvem e configurar a assinatura dos seus cafés personalizados do clube, você precisará criar uma conta a seguir.
+                    </p>
+                  </div>
+                )}
 
-                <button
-                  type="button"
-                  onClick={() => setStep(s => s + 1)}
-                  className="w-full py-4 bg-[#bf5a36] hover:bg-[#a64928] text-white font-bold rounded-full transition-all shadow-lg flex items-center justify-center gap-2"
-                >
-                  Prosseguir para o Cadastro
-                  <ChevronRight size={18} />
-                </button>
+                {user ? (
+                  <button
+                    type="button"
+                    onClick={() => setStep(ATRIBUTOS.length + 3)}
+                    className="w-full py-4 bg-[#bf5a36] hover:bg-[#a64928] text-white font-bold rounded-full transition-all shadow-lg flex items-center justify-center gap-2 font-sans"
+                  >
+                    Prosseguir para Assinatura
+                    <ChevronRight size={18} />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setStep(s => s + 1)}
+                    className="w-full py-4 bg-[#bf5a36] hover:bg-[#a64928] text-white font-bold rounded-full transition-all shadow-lg flex items-center justify-center gap-2 font-sans"
+                  >
+                    Prosseguir para o Cadastro
+                    <ChevronRight size={18} />
+                  </button>
+                )}
               </div>
             )}
 
@@ -398,6 +454,16 @@ export default function OnboardingPage() {
                       value={cadNome}
                       onChange={e => setCadNome(e.target.value)}
                       placeholder="Seu nome"
+                      className="w-full px-4 py-3.5 rounded-2xl border-0 bg-[#f5f0e6] text-[#4a2c2a] placeholder-[#4a2c2a]/40 focus:outline-none focus:ring-2 focus:ring-[#bf5a36] transition font-semibold"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">Apelido (como quer ser chamado)</label>
+                    <input
+                      type="text"
+                      value={cadApelido}
+                      onChange={e => setCadApelido(e.target.value)}
+                      placeholder="Seu apelido"
                       className="w-full px-4 py-3.5 rounded-2xl border-0 bg-[#f5f0e6] text-[#4a2c2a] placeholder-[#4a2c2a]/40 focus:outline-none focus:ring-2 focus:ring-[#bf5a36] transition font-semibold"
                     />
                   </div>
@@ -576,7 +642,7 @@ export default function OnboardingPage() {
             {/* Navegação Inferior */}
             <div className="flex items-center justify-between mt-12 pt-6 border-t border-white/20">
               <button
-                onClick={() => setStep(s => s - 1)}
+                onClick={() => setStep(s => s === ATRIBUTOS.length + 3 && user ? ATRIBUTOS.length + 1 : s - 1)}
                 disabled={step === 0 || isAuthStep || isCheckoutStep && saving}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-gray-300 hover:bg-white/5 transition disabled:opacity-30 disabled:cursor-not-allowed"
               >

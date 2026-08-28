@@ -20,6 +20,7 @@ import {
 import { WhatsAppRedirect } from '@/components/checkout/whatsapp-redirect';
 import { OrderSummary } from '@/components/cart/order-summary';
 import { useCart } from '@/context/cart-context';
+import { useAuth } from '@/context/auth-context';
 
 function gerarCodigoPedido() {
   return `#PG-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -28,6 +29,7 @@ function gerarCodigoPedido() {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, loading, clearCart, cep, freteCalculado, setCep, calcularFrete } = useCart();
+  const { user } = useAuth();
 
   const [endereco, setEndereco] = useState<EnderecoEntrega>(ENDERECO_VAZIO);
   const [pagamento, setPagamento] = useState<FormaPagamento | null>(null);
@@ -48,6 +50,33 @@ export default function CheckoutPage() {
     if (!enderecoValido(endereco) || !freteValido || !pagamento) return;
 
     const codigo = gerarCodigoPedido();
+    
+    if (user) {
+      try {
+        const comprasChave = `pingado_compras_${user.id}`;
+        const comprasExistentes = JSON.parse(localStorage.getItem(comprasChave) || '[]');
+        
+        const novaCompra = {
+          id: `compra-${Date.now()}`,
+          codigo: codigo,
+          data: new Date().toLocaleDateString('pt-BR'),
+          item: items.map(it => `${it.quantidade}x ${it.nome}${it.moagem ? ` (${it.moagem})` : ''}`).join(', '),
+          precoCafe: `R$ ${subtotal.toFixed(2).replace('.', ',')}`,
+          frete: freteCalculado ? 'Grátis' : 'R$ 15,00',
+          total: `R$ ${(subtotal + (freteCalculado ? 0 : 15)).toFixed(2).replace('.', ',')}`,
+          metodo: pagamento ? PAGAMENTO_LABELS[pagamento] : 'PIX',
+          status: 'Em processamento',
+          statusColor: 'bg-amber-100/50 text-amber-800 border-amber-200',
+          detalhes: 'Seu pedido foi recebido e estamos aguardando a confirmação do pagamento pelo WhatsApp.'
+        };
+        
+        comprasExistentes.unshift(novaCompra);
+        localStorage.setItem(comprasChave, JSON.stringify(comprasExistentes));
+      } catch (err) {
+        console.error('Erro ao salvar compra no localStorage:', err);
+      }
+    }
+
     clearCart();
     setPedidoConfirmado(codigo);
   }

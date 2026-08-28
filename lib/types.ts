@@ -3,6 +3,7 @@ export interface Perfil {
   nome: string | null;
   email: string | null;
   telefone?: string | null;
+  apelido?: string | null;
   avatar_url: string | null;
   role: 'cliente' | 'vendedor' | 'admin';
   created_at: string;

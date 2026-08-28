@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sliders, ArrowLeft, Save, Sparkles, SlidersHorizontal, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/context/auth-context';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
@@ -61,8 +62,11 @@ export default function SensorialDetalhesPage() {
     setSaving(false);
     setSuccess(true);
 
-    // Clear success message after 3 seconds
-    setTimeout(() => setSuccess(false), 3000);
+    // Redirect to profile page after 1.5 seconds so they see the success message
+    setTimeout(() => {
+      setSuccess(false);
+      router.push('/perfil');
+    }, 1500);
   };
 
   if (loading || !user) {
@@ -127,14 +131,26 @@ export default function SensorialDetalhesPage() {
               </h3>
 
               {/* Descrição Detalhada em Tempo Real */}
-              <div className="bg-background/50 p-4 rounded-xl border border-border/40 space-y-1 font-sans">
-                <span className="text-[10px] text-primary font-bold uppercase tracking-wider block">Classificação IA (Tempo Real)</span>
-                <h4 className="font-serif text-sm font-bold text-foreground">
-                  {obterPerfilDescricao(valores).nome}
-                </h4>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  {obterPerfilDescricao(valores).detalhes}
-                </p>
+              <div className="bg-background/50 p-4 rounded-xl border border-border/40 font-sans">
+                <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+                  <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary/20 flex-shrink-0">
+                    <Image
+                      src="/images/persona_coffee_lover.jpg"
+                      alt="Persona do Perfil Sensorial"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="space-y-1 flex-1 text-center sm:text-left">
+                    <span className="text-[10px] text-primary font-bold uppercase tracking-wider block">Classificação IA (Tempo Real)</span>
+                    <h4 className="font-serif text-sm font-bold text-foreground">
+                      {obterPerfilDescricao(valores).nome}
+                    </h4>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      {obterPerfilDescricao(valores).detalhes}
+                    </p>
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-6 font-sans">

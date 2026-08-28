@@ -8,7 +8,7 @@ import { matchPct, cafeSensoryValues } from '@/lib/pingado/selection';
 import { getMetodosPreparo, getSelecoesCaixa } from '@/lib/pingado/crm-data';
 import { brl } from '@/lib/pingado/format';
 
-const COLS = '2.1fr .8fr .7fr .6fr 1.4fr .8fr .9fr';
+const COLS = '2fr .8fr .7fr .6fr 1.2fr .6fr .8fr .6fr';
 
 export default function MeusProdutosPage() {
   const { meusProdutos } = useVendedor();
@@ -41,7 +41,7 @@ export default function MeusProdutosPage() {
       ) : (
         <div className="bg-pg-surface border border-[rgba(28,46,35,.10)] rounded-[3px] overflow-hidden">
           <div className="grid gap-[14px] px-[18px] py-3 border-b border-[rgba(28,46,35,.12)] text-[9.5px] tracking-[.14em] uppercase text-pg-text-tertiary" style={{ gridTemplateColumns: COLS }}>
-            <span>Café</span><span>Torra</span><span>Preço</span><span>Estoque</span><span>Notas</span><span>Seleções</span><span className="justify-self-end">Match IA</span>
+            <span>Café</span><span>Torra</span><span>Preço</span><span>Estoque</span><span>Notas</span><span>Seleções</span><span>Match IA</span><span className="justify-self-end">Ações</span>
           </div>
           {linhas.map(({ p, match }) => (
             <div key={p.id} className="grid gap-[14px] items-center px-[18px] py-[14px] border-b border-[rgba(28,46,35,.06)] last:border-b-0 hover:bg-[#F6F0E6] transition-colors" style={{ gridTemplateColumns: COLS }}>
@@ -63,9 +63,14 @@ export default function MeusProdutosPage() {
                 ))}
               </div>
               <span className="text-[12.5px] text-[#5E6A5C]">{getSelecoesCaixa(p)}×</span>
-              <div className="justify-self-end flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <span className="text-[13px] text-pg-text">{match}%</span>
                 <PgMatchBar pct={match} />
+              </div>
+              <div className="justify-self-end">
+                <Link href={`/vendedor/cadastrar?id=${p.id}`} className="text-xs text-pg-terracotta hover:underline font-bold">
+                  Editar
+                </Link>
               </div>
             </div>
           ))}
