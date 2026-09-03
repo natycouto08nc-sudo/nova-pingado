@@ -13,11 +13,11 @@ import { useCart } from "@/context/cart-context"
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
-  const { user, signOut } = useAuth()
+  const { user, role, signOut } = useAuth()
   const { itemCount } = useCart()
   const pathname = usePathname()
 
-  const isProfileRoute = pathname?.startsWith('/perfil')
+  const isProfileRoute = pathname?.startsWith('/perfil') || pathname?.startsWith('/vendedor') || pathname?.startsWith('/admin')
 
   const navigation = isProfileRoute
     ? [
@@ -28,7 +28,7 @@ export function SiteHeader() {
         { label: "Assinatura", href: "/#planos" },
         { label: "Como Funciona", href: "/#como-funciona" },
         { label: "Nossos Produtores", href: "/#produtores" },
-        { label: "Loja", href: "/#produtos" },
+        { label: "Loja", href: "/loja" },
         { label: "Sobre", href: "/#newsletter" },
       ]
 
@@ -161,6 +161,26 @@ export function SiteHeader() {
                     <Sliders size={14} className="text-primary" />
                     Refazer Perfil Sensorial
                   </Link>
+                  {(role === 'vendedor' || user.role === 'vendedor') && (
+                    <Link 
+                      href="/vendedor" 
+                      onClick={() => setDropdownOpen(false)} 
+                      className="px-3 py-2 text-xs hover:bg-muted rounded-lg font-bold transition-colors text-left flex items-center gap-2 text-primary"
+                    >
+                      <Sliders size={14} className="text-primary" />
+                      Painel do Vendedor
+                    </Link>
+                  )}
+                  {(role === 'admin' || user.role === 'admin') && (
+                    <Link 
+                      href="/admin" 
+                      onClick={() => setDropdownOpen(false)} 
+                      className="px-3 py-2 text-xs hover:bg-muted rounded-lg font-bold transition-colors text-left flex items-center gap-2 text-primary"
+                    >
+                      <Sliders size={14} className="text-primary" />
+                      Painel do Administrador
+                    </Link>
+                  )}
                   <button 
                     onClick={handleSignOutClick}
                     className="px-3 py-2 text-xs hover:bg-red-500/5 text-red-600 rounded-lg font-bold transition-colors text-left w-full flex items-center gap-2 border-t border-border/60 mt-1 pt-2"
@@ -203,13 +223,13 @@ export function SiteHeader() {
           <ul className="flex flex-col">
             {navigation.map((item) => (
               <li key={item.href}>
-                <a
+                <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className="block border-b border-border/60 py-3 font-serif text-lg transition-colors last:border-b-0 hover:text-primary focus-visible:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

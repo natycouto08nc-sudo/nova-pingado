@@ -2,8 +2,10 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MOCK_CAFES } from "@/lib/coffees"
 import type { Cafe } from "@/lib/types"
@@ -114,6 +116,21 @@ export function ProductGrid() {
             </TabsContent>
           ))}
         </Tabs>
+
+        <div className="mt-12 flex justify-center">
+          <Button
+            variant="outline"
+            size="lg"
+            className="group h-12 px-6 text-base"
+            render={<Link href="/loja" />}
+          >
+            Explorar vitrine completa com filtros
+            <ArrowRight
+              data-icon="inline-end"
+              className="ml-2 transition-transform group-hover:translate-x-0.5"
+            />
+          </Button>
+        </div>
       </div>
     </section>
   )

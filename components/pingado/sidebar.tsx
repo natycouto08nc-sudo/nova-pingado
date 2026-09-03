@@ -35,9 +35,9 @@ export function PgSidebar({
   };
 
   return (
-    <aside className={`w-[238px] flex-none ${bg} text-pg-cream py-[26px] flex flex-col gap-6 sticky top-0 h-screen font-pg-ui`}>
+    <aside className={`w-[238px] flex-none ${bg} text-pg-cream py-[26px] flex flex-col gap-6 sticky top-16 md:top-20 h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] font-pg-ui`}>
       <div className="px-[22px]">
-        <div className="font-pg-display text-[19px] tracking-[.34em] text-pg-cream-2">PINGADO</div>
+        <Link href="/" className="font-pg-display text-[19px] tracking-[.34em] text-pg-cream-2 hover:opacity-80 transition-opacity">PINGADO</Link>
         <div className="text-[9px] tracking-[.2em] uppercase text-[#8FA394] mt-[7px]">{wordmarkSub}</div>
       </div>
 

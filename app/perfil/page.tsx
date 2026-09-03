@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useAuth } from '@/context/auth-context';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { PerfilTabs } from '@/components/perfil/perfil-tabs';
 import { obterPerfilDescricao } from '@/lib/recommendations';
 
 const ATRIBUTOS = [
@@ -84,8 +85,8 @@ export default function PerfilPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-[#1c3328] flex items-center justify-center text-[#f5ede3]">
-        <div className="w-8 h-8 rounded-full border-2 border-[#b5563c] border-t-transparent animate-spin" />
+      <div className="min-h-screen bg-background flex items-center justify-center text-foreground">
+        <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
       </div>
     );
   }
@@ -93,32 +94,33 @@ export default function PerfilPage() {
   const recomendados = getRecomendados();
 
   return (
-    <div className="min-h-screen bg-[#f5ede3] text-[#2f3b2a] flex flex-col font-sans">
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between font-sans">
       <SiteHeader />
 
-      {/* Área Verde Oliva do Painel */}
-      <main className="flex-1 bg-[#1c3328] py-12 px-4 md:px-6 lg:px-8 text-white">
-        <div className="max-w-7xl mx-auto space-y-8">
-          
-          {/* Cabeçalho do Dashboard */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/10 pb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                <User size={24} className="text-[#e29b63]" />
-              </div>
-              <div>
-                <h1 className="font-serif text-3xl font-normal text-white">Painel do Assinante</h1>
-                <p className="text-gray-300 text-sm font-sans">Gerencie seu perfil, preferências sensoriais e detalhes do clube.</p>
-              </div>
+      <main className="flex-1 max-w-7xl w-full mx-auto py-10 px-4 md:px-6 lg:px-8 space-y-8">
+        {/* Cabeçalho do Dashboard */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
+              <User size={28} />
             </div>
-            <button
-              onClick={handleSignOut}
-              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-full transition-all border border-white/15 shadow-sm w-fit"
-            >
-              <LogOut size={14} className="text-[#e29b63]" />
-              Sair da Conta
-            </button>
+            <div>
+              <p className="kicker text-primary">Área do Assinante</p>
+              <h1 className="font-serif text-3xl md:text-4xl text-foreground font-normal mt-0.5">Painel do Assinante</h1>
+              <p className="text-muted-foreground text-sm font-sans">Gerencie seu perfil, preferências sensoriais e detalhes do clube.</p>
+            </div>
           </div>
+          <button
+            onClick={handleSignOut}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-card hover:bg-muted text-foreground text-xs font-bold rounded-full transition-all border border-border shadow-xs w-fit"
+          >
+            <LogOut size={14} className="text-primary" />
+            Sair da Conta
+          </button>
+        </div>
+
+        {/* Barra de Abas Unificada */}
+        <PerfilTabs />
 
           <div className="grid lg:grid-cols-3 gap-8">
             
@@ -234,7 +236,7 @@ export default function PerfilPage() {
                         value={apelido}
                         onChange={e => setApelido(e.target.value)}
                         placeholder="Seu apelido"
-                        className="w-full px-4 py-3 rounded-xl border border-border/80 bg-white text-[#2f3b2a] focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition font-semibold"
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition font-medium text-sm"
                       />
                     </div>
                     <div>
@@ -244,7 +246,7 @@ export default function PerfilPage() {
                         value={telefone}
                         onChange={e => setTelefone(e.target.value)}
                         placeholder="(11) 99999-9999"
-                        className="w-full px-4 py-3 rounded-xl border border-border/80 bg-white text-[#2f3b2a] focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition font-semibold"
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition font-medium text-sm"
                       />
                     </div>
                     <div>
@@ -370,13 +372,13 @@ export default function PerfilPage() {
 
           {/* Recomendações Baseadas no Perfil */}
           {perfilSensorial && recomendados.length > 0 && (
-            <div className="pt-8 border-t border-white/10">
+            <div className="pt-8 border-t border-border/70">
               <div className="mb-6">
-                <h2 className="font-serif text-2xl font-normal text-white flex items-center gap-2">
-                  <Award size={24} className="text-[#e29b63]" />
+                <h2 className="font-serif text-2xl md:text-3xl font-normal text-foreground flex items-center gap-2">
+                  <Award size={24} className="text-primary" />
                   Recomendados para o Seu Paladar
                 </h2>
-                <p className="text-gray-300 text-sm mt-1 font-sans">Os cafés abaixo possuem a melhor compatibilidade com o seu perfil sensorial atual mapeado pela IA.</p>
+                <p className="text-muted-foreground text-sm mt-1 font-sans">Os cafés abaixo possuem a melhor compatibilidade com o seu perfil sensorial atual mapeado pela IA.</p>
               </div>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -450,9 +452,7 @@ export default function PerfilPage() {
               </div>
             </div>
           )}
-
-        </div>
-      </main>
+        </main>
 
       <SiteFooter />
     </div>

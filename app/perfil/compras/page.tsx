@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/auth-context';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { PerfilTabs } from '@/components/perfil/perfil-tabs';
 
 const MOCK_COMPRAS = [
   {
@@ -63,40 +64,31 @@ export default function ComprasDetalhesPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-[#1c3328] flex items-center justify-center text-[#f5ede3]">
-        <div className="w-8 h-8 rounded-full border-2 border-[#b5563c] border-t-transparent animate-spin" />
+      <div className="min-h-screen bg-background flex items-center justify-center text-foreground">
+        <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f5ede3] text-[#2f3b2a] flex flex-col font-sans">
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between font-sans">
       <SiteHeader />
 
-      <main className="flex-1 bg-[#1c3328] py-12 px-4 md:px-6 lg:px-8 text-white">
-        <div className="max-w-4xl mx-auto space-y-8">
-          
-          {/* Voltar */}
-          <Link 
-            href="/perfil" 
-            className="inline-flex items-center gap-2 text-xs font-bold text-gray-300 hover:text-white uppercase tracking-wider transition-colors"
-          >
-            <ArrowLeft size={14} />
-            Voltar ao Painel
-          </Link>
-
-          {/* Cabeçalho */}
-          <div className="border-b border-white/10 pb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                <ShoppingBag size={24} className="text-[#e29b63]" />
-              </div>
-              <div>
-                <h1 className="font-serif text-3xl font-normal text-white">Minhas Compras</h1>
-                <p className="text-gray-300 text-sm font-sans">Consulte o histórico de pedidos individuais comprados avulsos na loja.</p>
-              </div>
-            </div>
+      <main className="flex-1 max-w-7xl w-full mx-auto py-10 px-4 md:px-6 lg:px-8 space-y-8">
+        {/* Cabeçalho */}
+        <div className="flex items-center gap-4 pb-2">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
+            <ShoppingBag size={28} />
           </div>
+          <div>
+            <p className="kicker text-primary">Histórico</p>
+            <h1 className="font-serif text-3xl md:text-4xl text-foreground font-normal mt-0.5">Minhas Compras</h1>
+            <p className="text-muted-foreground text-sm font-sans">Consulte o histórico de pedidos individuais comprados avulsos na loja.</p>
+          </div>
+        </div>
+
+        {/* Barra de Abas Unificada */}
+        <PerfilTabs />
 
           {/* Lista de Compras */}
           <div className="space-y-6">
@@ -169,25 +161,23 @@ export default function ComprasDetalhesPage() {
             )))}
 
             {/* Suporte */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-center justify-between gap-4 font-sans text-xs">
-              <div className="flex items-center gap-2">
-                <HelpCircle size={16} className="text-[#e29b63]" />
-                <span className="text-gray-300">Dúvidas sobre o frete, entrega ou rastreamento de compras avulsas?</span>
+            <div className="bg-card border border-border rounded-2xl p-5 flex items-center justify-between gap-4 font-sans text-xs shadow-sm">
+              <div className="flex items-center gap-2.5">
+                <HelpCircle size={16} className="text-primary" />
+                <span className="text-muted-foreground">Dúvidas sobre o frete, entrega ou rastreamento de compras avulsas?</span>
               </div>
               <a 
                 href="https://wa.me/5511999999999" 
                 target="_blank" 
                 rel="noreferrer"
-                className="text-[#e29b63] hover:underline font-bold flex items-center gap-1"
+                className="text-primary hover:underline font-bold flex items-center gap-1 shrink-0"
               >
                 Falar com Sommelier
                 <ExternalLink size={12} />
               </a>
             </div>
           </div>
-
-        </div>
-      </main>
+        </main>
 
       <SiteFooter />
     </div>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { Cafe } from '@/lib/types';
 import { SiteHeader } from '@/components/site-header';
+import { SiteFooter } from '@/components/site-footer';
 import { useCart } from '@/context/cart-context';
 import { useAuth } from '@/context/auth-context';
 import { SENS_AXES, REFERENCE_PROFILES, ROTULOS_INTENSIDADE, getReferenceProfile } from '@/lib/pingado/profiles';
@@ -55,10 +56,11 @@ export function ProductDetail({ cafe }: { cafe: Cafe }) {
   }
 
   return (
-    <div className="min-h-screen bg-pg-bg font-pg-ui">
-      <SiteHeader />
+    <div className="min-h-screen bg-pg-bg font-pg-ui flex flex-col justify-between">
+      <div>
+        <SiteHeader />
 
-      <div className="px-[38px] py-[22px] pb-[70px]">
+        <div className="px-[38px] py-[22px] pb-[70px]">
         <div className="text-[11.5px] text-pg-text-tertiary mb-5">
           <Link href="/loja" className="hover:text-pg-terracotta">Loja</Link> · {cafe.formato ?? 'Grãos'} · <span className="text-[#5E6A5C]">{cafe.nome}</span>
         </div>
@@ -187,6 +189,8 @@ export function ProductDetail({ cafe }: { cafe: Cafe }) {
           </div>
         </div>
       </div>
+      </div>
+      <SiteFooter />
     </div>
   );
 }

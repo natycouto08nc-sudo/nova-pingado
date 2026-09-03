@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Star } from "lucide-react"
 
 import {
@@ -60,16 +61,31 @@ export function SiteFooter() {
             <div key={column.title}>
               <h3 className="kicker text-gold">{column.title}</h3>
               <ul className="mt-4 flex flex-col gap-2.5">
-                {column.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#top"
-                      className="text-sm leading-relaxed text-coffee-foreground/70 underline-offset-4 transition-colors hover:text-gold hover:underline focus-visible:text-gold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
+                {column.links.map((link) => {
+                  const href =
+                    link === "Loja"
+                      ? "/loja"
+                      : link === "Assinatura" || link === "Clube de Assinatura"
+                      ? "/onboarding"
+                      : link === "FAQ"
+                      ? "/#faq"
+                      : link === "Seja um parceiro"
+                      ? "/vendedor/cadastrar"
+                      : link === "Nossa origem"
+                      ? "/produtores"
+                      : "#top"
+
+                  return (
+                    <li key={link}>
+                      <Link
+                        href={href}
+                        className="text-sm leading-relaxed text-coffee-foreground/70 underline-offset-4 transition-colors hover:text-gold hover:underline focus-visible:text-gold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+                      >
+                        {link}
+                      </Link>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           ))}

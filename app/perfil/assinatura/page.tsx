@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/auth-context';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { PerfilTabs } from '@/components/perfil/perfil-tabs';
 
 const PLANOS_INFO = {
   basico: { nome: 'Descoberta', preco: 'R$ 89,90/mês', pacotes: 1 },
@@ -73,40 +74,31 @@ export default function AssinaturaDetalhesPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-[#1c3328] flex items-center justify-center text-[#f5ede3]">
-        <div className="w-8 h-8 rounded-full border-2 border-[#b5563c] border-t-transparent animate-spin" />
+      <div className="min-h-screen bg-background flex items-center justify-center text-foreground">
+        <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f5ede3] text-[#2f3b2a] flex flex-col font-sans">
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between font-sans">
       <SiteHeader />
 
-      <main className="flex-1 bg-[#1c3328] py-12 px-4 md:px-6 lg:px-8 text-white">
-        <div className="max-w-4xl mx-auto space-y-8">
-          
-          {/* Voltar */}
-          <Link 
-            href="/perfil" 
-            className="inline-flex items-center gap-2 text-xs font-bold text-gray-300 hover:text-white uppercase tracking-wider transition-colors"
-          >
-            <ArrowLeft size={14} />
-            Voltar ao Painel
-          </Link>
-
-          {/* Cabeçalho */}
-          <div className="border-b border-white/10 pb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center flex-shrink-0">
-                <CreditCard size={24} className="text-[#e29b63]" />
-              </div>
-              <div>
-                <h1 className="font-serif text-3xl font-normal text-white">Minha Assinatura</h1>
-                <p className="text-gray-300 text-sm font-sans">Gerencie o plano do seu clube, veja faturamento e o histórico de entregas.</p>
-              </div>
-            </div>
+      <main className="flex-1 max-w-7xl w-full mx-auto py-10 px-4 md:px-6 lg:px-8 space-y-8">
+        {/* Cabeçalho */}
+        <div className="flex items-center gap-4 pb-2">
+          <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
+            <CreditCard size={28} />
           </div>
+          <div>
+            <p className="kicker text-primary">Assinatura Ativa</p>
+            <h1 className="font-serif text-3xl md:text-4xl text-foreground font-normal mt-0.5">Minha Assinatura</h1>
+            <p className="text-muted-foreground text-sm font-sans">Gerencie o plano do seu clube, veja faturamento e o histórico de entregas.</p>
+          </div>
+        </div>
+
+        {/* Barra de Abas Unificada */}
+        <PerfilTabs />
 
           {!assinatura ? (
             <div className="bg-card text-card-foreground rounded-2xl p-8 text-center border border-border/40">
@@ -172,14 +164,14 @@ export default function AssinaturaDetalhesPage() {
                           <button
                             onClick={() => handleUpdateSubStatus('pausada')}
                             disabled={updatingSub}
-                            className="bg-amber-500/5 hover:bg-amber-500/10 text-amber-700 border border-amber-500/20 px-4 py-2 rounded-xl text-xs font-bold transition font-sans"
+                            className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 border border-amber-500/30 px-4 py-2 rounded-xl text-xs font-bold transition font-sans"
                           >
                             Pausar Clube
                           </button>
                           <button
                             onClick={() => handleUpdateSubStatus('cancelada')}
                             disabled={updatingSub}
-                            className="bg-red-500/5 hover:bg-red-500/10 text-red-700 border border-red-500/20 px-4 py-2 rounded-xl text-xs font-bold transition font-sans"
+                            className="bg-red-500/10 hover:bg-red-500/20 text-red-800 border border-red-500/30 px-4 py-2 rounded-xl text-xs font-bold transition font-sans"
                           >
                             Cancelar
                           </button>
@@ -189,7 +181,7 @@ export default function AssinaturaDetalhesPage() {
                         <button
                           onClick={() => handleUpdateSubStatus('ativa')}
                           disabled={updatingSub}
-                          className="bg-green-500/5 hover:bg-green-500/10 text-green-700 border border-green-500/20 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 font-sans"
+                          className="bg-green-500/10 hover:bg-green-500/20 text-green-800 border border-green-500/30 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 font-sans"
                         >
                           <RefreshCw size={12} className={updatingSub ? 'animate-spin' : ''} />
                           Reativar Assinatura
@@ -278,9 +270,7 @@ export default function AssinaturaDetalhesPage() {
 
             </div>
           )}
-
-        </div>
-      </main>
+        </main>
 
       <SiteFooter />
     </div>

@@ -3,6 +3,8 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
+import { SiteHeader } from '@/components/site-header';
+import { SiteFooter } from '@/components/site-footer';
 import { SENS_AXES, REFERENCE_PROFILES, PLANOS_ASSINATURA, RESTRICOES_QUIZ, pipsFor } from '@/lib/pingado/profiles';
 import { matchPct } from '@/lib/pingado/selection';
 import { emailValido } from '@/lib/pingado/auth-helpers';
@@ -201,12 +203,14 @@ export default function LoginPage() {
   const mostrarTabs = passo === 'email' || passo === 'cadastro';
 
   return (
-    <div className="min-h-screen bg-pg-green flex flex-col items-center justify-center py-[60px] px-6 text-pg-cream font-pg-ui">
-      <div className="font-pg-display text-2xl tracking-[.42em] text-pg-cream-2">PINGADO</div>
-      <div className="text-[10px] tracking-[.24em] uppercase text-[#8FA394] mt-[9px]">Plataforma de assinatura de cafés especiais</div>
+    <div className="min-h-screen bg-pg-green flex flex-col justify-between text-pg-cream font-pg-ui">
+      <SiteHeader />
+      <div className="flex-1 flex flex-col items-center justify-center py-[50px] px-6">
+        <div className="font-pg-display text-2xl tracking-[.42em] text-pg-cream-2">PINGADO</div>
+        <div className="text-[10px] tracking-[.24em] uppercase text-[#8FA394] mt-[9px]">Plataforma de assinatura de cafés especiais</div>
 
-      <div className="w-[440px] max-w-full bg-pg-surface rounded-[4px] mt-7 text-pg-text overflow-hidden">
-        <div className="px-6 py-[15px] border-b border-[rgba(28,46,35,.10)] flex items-center gap-3">
+        <div className="w-[440px] max-w-full bg-pg-surface rounded-[4px] mt-7 text-pg-text overflow-hidden shadow-lg border border-[rgba(28,46,35,.15)]">
+          <div className="px-6 py-[15px] border-b border-[rgba(28,46,35,.10)] flex items-center gap-3">
           {podeVoltar && (
             <button onClick={voltar} className="cursor-pointer border-0 bg-transparent p-0 text-lg leading-none text-[#5E6A5C]" aria-label="Voltar">‹</button>
           )}
@@ -470,9 +474,11 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="text-[11.5px] text-[#7A8E7C] mt-[22px] max-w-[440px] text-center leading-[1.6]">
+      <div className="text-[11.5px] text-[#8FA394] mt-[22px] max-w-[440px] text-center leading-[1.6]">
         Demonstração com dados fictícios · escolha uma conta de demonstração ou crie a sua.
       </div>
+      </div>
+      <SiteFooter />
     </div>
   );
 }
