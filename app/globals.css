@@ -73,57 +73,57 @@
 :root {
   color-scheme: light;
 
-  --coffee: #2f3b2a;
+  --coffee: #4b270f;
   --coffee-foreground: #f5ede3;
-  --gold: #c89b4a;
-  --gold-foreground: #2f3b2a;
+  --gold: #f97316;
+  --gold-foreground: #ffffff;
 
   --background: #f5ede3;
-  --foreground: #2f3b2a;
+  --foreground: #382215;
   --card: #fcf8f2;
-  --card-foreground: #2f3b2a;
+  --card-foreground: #382215;
   --popover: #fcf8f2;
-  --popover-foreground: #2f3b2a;
-  --primary: #b5563c;
-  --primary-foreground: #fcf8f2;
-  --secondary: #2f3b2a;
+  --popover-foreground: #382215;
+  --primary: #f97316;
+  --primary-foreground: #ffffff;
+  --secondary: #4b270f;
   --secondary-foreground: #f5ede3;
   --muted: #eadfd0;
-  --muted-foreground: #6f6656;
-  --accent: #c89b4a;
-  --accent-foreground: #2f3b2a;
+  --muted-foreground: #7d6b5c;
+  --accent: #f97316;
+  --accent-foreground: #ffffff;
   --destructive: #9b2c1e;
   --border: #e2d4c1;
   --input: #e2d4c1;
-  --ring: #b5563c;
+  --ring: #f97316;
   --radius: 0.75rem;
 
-  /* Design tokens do CRM Pingado — hex exatos do handoff (design_handoff_crm_pingado/README.md). */
+  /* Design tokens do CRM Pingado — atualizados para a nova paleta café torrado e laranja */
   --pg-bg: #f3ede3;
   --pg-surface: #faf6ef;
   --pg-surface-alt: #f4eee3;
   --pg-field: #fffdf8;
-  --pg-green: #1c2e23;
-  --pg-green-dark: #141f19;
-  --pg-green-soft: #2c4235;
-  --pg-green-soft-2: #22382b;
-  --pg-terracotta: #c0562b;
-  --pg-terracotta-hover: #9c4520;
-  --pg-terracotta-text: #a2542c;
+  --pg-green: #4b270f;
+  --pg-green-dark: #361a0a;
+  --pg-green-soft: #5c351b;
+  --pg-green-soft-2: #482711;
+  --pg-terracotta: #f97316;
+  --pg-terracotta-hover: #ea580c;
+  --pg-terracotta-text: #ea580c;
   --pg-cream: #ede6d9;
   --pg-cream-2: #f6f1e6;
-  --pg-text: #23231f;
-  --pg-text-secondary: #7c7466;
-  --pg-text-tertiary: #9c8f7d;
-  --pg-text-label: #8a8175;
+  --pg-text: #382215;
+  --pg-text-secondary: #7d6b5c;
+  --pg-text-tertiary: #9c8877;
+  --pg-text-label: #8a7665;
   --pg-success-bg: #e4ede3;
   --pg-success-fg: #3f6146;
-  --pg-warn-bg: #f1e5d9;
-  --pg-warn-fg: #8c5227;
-  --pg-error-bg: #f8edeb;
-  --pg-error-fg: #9b3a2c;
-  --pg-accent-bg: #f2e4d8;
-  --pg-accent-fg: #7c6555;
+  --pg-warn-bg: #fff7ed;
+  --pg-warn-fg: #ea580c;
+  --pg-error-bg: #fef2f2;
+  --pg-error-fg: #b91c1c;
+  --pg-accent-bg: #ffedd5;
+  --pg-accent-fg: #c2410c;
 }
 
 @layer base {

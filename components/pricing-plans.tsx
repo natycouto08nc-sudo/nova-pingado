@@ -89,11 +89,11 @@ export function PricingPlans() {
               key={plan.name}
               className={cn(
                 "relative h-full transition-all hover:-translate-y-1 hover:shadow-xl",
-                plan.popular && "md:-mt-4 md:pt-10 ring-2 ring-gold",
+                plan.popular && "md:-mt-4 md:pt-10 ring-2 ring-primary",
               )}
             >
               {plan.popular && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gold text-gold-foreground">
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground font-bold">
                   MAIS POPULAR
                 </Badge>
               )}

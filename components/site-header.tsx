@@ -72,7 +72,7 @@ export function SiteHeader() {
 
         <Link
           href="/"
-          className="font-serif text-2xl tracking-[0.32em] text-foreground transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring md:text-3xl"
+          className="font-serif text-2xl tracking-[0.32em] text-primary transition-opacity hover:opacity-85 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring md:text-3xl"
         >
           PINGADO
         </Link>

@@ -49,17 +49,17 @@ export function SiteFooter() {
   return (
     <footer className="bg-coffee text-coffee-foreground">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
-        <p className="text-center font-serif text-2xl tracking-[0.32em] md:text-3xl">
+        <p className="text-center font-serif text-2xl tracking-[0.32em] text-primary md:text-3xl">
           PINGADO
         </p>
-        <p className="mt-3 text-center text-sm text-coffee-foreground/60">
+        <p className="mt-3 text-center text-sm text-coffee-foreground/70">
           Cafés especiais com nome, rosto e história.
         </p>
 
         <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           {columns.map((column) => (
             <div key={column.title}>
-              <h3 className="kicker text-gold">{column.title}</h3>
+              <h3 className="kicker text-primary">{column.title}</h3>
               <ul className="mt-4 flex flex-col gap-2.5">
                 {column.links.map((link) => {
                   const href =
@@ -110,7 +110,7 @@ export function SiteFooter() {
           <div className="flex items-center gap-2">
             <div className="flex gap-0.5" aria-hidden="true">
               {Array.from({ length: 5 }).map((_, index) => (
-                <Star key={index} className="size-4 fill-gold text-gold" />
+                <Star key={index} className="size-4 fill-primary text-primary" />
               ))}
             </div>
             <p className="text-sm text-coffee-foreground/70">
