@@ -161,7 +161,7 @@ export function SiteHeader() {
                     <Sliders size={14} className="text-primary" />
                     Refazer Perfil Sensorial
                   </Link>
-                  {(role === 'vendedor' || user.role === 'vendedor') && (
+                  {role === 'vendedor' && (
                     <Link 
                       href="/vendedor" 
                       onClick={() => setDropdownOpen(false)} 
@@ -171,7 +171,7 @@ export function SiteHeader() {
                       Painel do Vendedor
                     </Link>
                   )}
-                  {(role === 'admin' || user.role === 'admin') && (
+                  {role === 'admin' && (
                     <Link 
                       href="/admin" 
                       onClick={() => setDropdownOpen(false)} 
