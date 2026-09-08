@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { obterPerfilDescricao } from '@/lib/recommendations';
+import { formatTelefone } from '@/lib/utils';
 
 const PREFERENCIAS = [
   'Chocolate', 'Caramelo', 'Castanhas', 'Floral',
@@ -454,9 +455,11 @@ export default function OnboardingPage() {
                     <input
                       type="tel"
                       required
+                      inputMode="numeric"
                       value={cadTelefone}
-                      onChange={e => setCadTelefone(e.target.value)}
-                      placeholder="(11) 99999-9999"
+                      onChange={e => setCadTelefone(formatTelefone(e.target.value))}
+                      placeholder="(11)99999-9999"
+                      maxLength={14}
                       className="w-full px-4 py-3.5 rounded-2xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition font-medium text-sm"
                     />
                   </div>

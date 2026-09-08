@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Save, Sliders, CreditCard, AlertCircle, Sparkles, LogOut, Award, ShoppingBag, ArrowRight } from 'lucide-react';
+import { User, Save, Sliders, CreditCard, AlertCircle, Sparkles, LogOut, Award, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/auth-context';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { PerfilTabs } from '@/components/perfil/perfil-tabs';
+import { EnderecosCard } from '@/components/perfil/enderecos-card';
 import { obterPerfilDescricao } from '@/lib/recommendations';
 
 const ATRIBUTOS = [
@@ -42,19 +43,6 @@ export default function PerfilPage() {
   const [telefone, setTelefone] = useState('');
   const [apelido, setApelido] = useState('');
   const [saving, setSaving] = useState(false);
-  const [totalCompras, setTotalCompras] = useState(0);
-
-  useEffect(() => {
-    if (user) {
-      try {
-        const key = `pingado_compras_${user.id}`;
-        const items = JSON.parse(localStorage.getItem(key) || '[]');
-        setTotalCompras(items.length);
-      } catch (e) {
-        console.error('Erro ao ler compras do localStorage:', e);
-      }
-    }
-  }, [user]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -185,31 +173,7 @@ export default function PerfilPage() {
               </div>
 
               {/* Seção Minhas Compras */}
-              <div className="bg-card text-card-foreground rounded-2xl p-6 shadow-md border border-border/40 flex flex-col justify-between h-fit">
-                <div>
-                  <h2 className="font-serif text-xl font-normal text-foreground mb-4 flex items-center gap-2">
-                    <ShoppingBag size={20} className="text-primary" />
-                    Minhas Compras Avulsas
-                  </h2>
-                  <p className="text-xs text-muted-foreground font-medium font-sans">
-                    Gerencie e acompanhe seus pedidos de cafés especiais comprados avulsos em nossa loja.
-                  </p>
-                  
-                  <div className="mt-4 bg-background/50 p-4 rounded-xl border border-border/40 text-xs font-semibold text-muted-foreground font-sans">
-                    Você possui <strong className="text-foreground">{totalCompras} {totalCompras === 1 ? 'compra avulsa' : 'compras avulsas'}</strong> {totalCompras === 1 ? 'finalizada' : 'finalizadas'} em seu histórico.
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-border/50 flex justify-end">
-                  <Link 
-                    href="/perfil/compras" 
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
-                  >
-                    Mais detalhes
-                    <ArrowRight size={14} />
-                  </Link>
-                </div>
-              </div>
+              <EnderecosCard userId={user.id} />
 
               {/* Informações Cadastrais */}
               <div className="bg-card text-card-foreground rounded-2xl p-6 shadow-md border border-border/40">

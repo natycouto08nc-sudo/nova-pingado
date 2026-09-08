@@ -6,16 +6,9 @@ import { CheckCircle2, Lock, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { formatCep, cepValido } from '@/lib/cep';
 
-export function formatCep(raw: string) {
-  const digitos = raw.replace(/\D/g, '').slice(0, 8);
-  if (digitos.length <= 5) return digitos;
-  return `${digitos.slice(0, 5)}-${digitos.slice(5)}`;
-}
-
-export function cepValido(cep: string) {
-  return cep.replace(/\D/g, '').length === 8;
-}
+export { formatCep, cepValido };
 
 interface ShippingCalculationProps {
   cep: string;

@@ -11,7 +11,8 @@ import {
   enderecoValido,
   type EnderecoEntrega,
 } from '@/components/checkout/shipping-address-form';
-import { ShippingCalculation, cepValido } from '@/components/cart/shipping-calculation';
+import { LoggedInAddressSection } from '@/components/checkout/logged-in-address-section';
+import { ShippingCalculation, cepValido, formatCep } from '@/components/cart/shipping-calculation';
 import {
   PaymentMethodSelector,
   PAGAMENTO_LABELS,
@@ -21,6 +22,7 @@ import { WhatsAppRedirect } from '@/components/checkout/whatsapp-redirect';
 import { OrderSummary } from '@/components/cart/order-summary';
 import { useCart } from '@/context/cart-context';
 import { useAuth } from '@/context/auth-context';
+import type { EnderecoSalvo } from '@/lib/types';
 
 function gerarCodigoPedido() {
   return `#PG-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -32,6 +34,7 @@ export default function CheckoutPage() {
   const { user } = useAuth();
 
   const [endereco, setEndereco] = useState<EnderecoEntrega>(ENDERECO_VAZIO);
+  const [enderecoSelecionado, setEnderecoSelecionado] = useState<EnderecoSalvo | null>(null);
   const [pagamento, setPagamento] = useState<FormaPagamento | null>(null);
   const [tentouEnviar, setTentouEnviar] = useState(false);
   const [pedidoConfirmado, setPedidoConfirmado] = useState<string | null>(null);
@@ -43,19 +46,29 @@ export default function CheckoutPage() {
     }
   }, [loading, items.length, pedidoConfirmado, router]);
 
+  function handleSelecionarEndereco(sel: EnderecoSalvo) {
+    setEnderecoSelecionado(sel);
+    const cepFormatado = formatCep(sel.cep);
+    if (cepFormatado !== cep) {
+      setCep(cepFormatado);
+    }
+  }
+
+  const enderecoOk = user ? enderecoSelecionado !== null : enderecoValido(endereco);
   const freteValido = cepValido(cep) && freteCalculado;
+  const nomeParaPedido = user ? user.nome : endereco.nomeCompleto;
 
   function handleFinalizarPedido() {
     setTentouEnviar(true);
-    if (!enderecoValido(endereco) || !freteValido || !pagamento) return;
+    if (!enderecoOk || !freteValido || !pagamento) return;
 
     const codigo = gerarCodigoPedido();
-    
+
     if (user) {
       try {
         const comprasChave = `pingado_compras_${user.id}`;
         const comprasExistentes = JSON.parse(localStorage.getItem(comprasChave) || '[]');
-        
+
         const novaCompra = {
           id: `compra-${Date.now()}`,
           codigo: codigo,
@@ -69,7 +82,7 @@ export default function CheckoutPage() {
           statusColor: 'bg-amber-100/50 text-amber-800 border-amber-200',
           detalhes: 'Seu pedido foi recebido e estamos aguardando a confirmação do pagamento pelo WhatsApp.'
         };
-        
+
         comprasExistentes.unshift(novaCompra);
         localStorage.setItem(comprasChave, JSON.stringify(comprasExistentes));
       } catch (err) {
@@ -90,7 +103,7 @@ export default function CheckoutPage() {
           {pedidoConfirmado ? (
             <WhatsAppRedirect
               orderCode={pedidoConfirmado}
-              nomeUsuario={endereco.nomeCompleto}
+              nomeUsuario={nomeParaPedido}
               valorPedido={totalPedido}
               metodoPagamento={pagamento ? PAGAMENTO_LABELS[pagamento] : ''}
             />
@@ -100,10 +113,19 @@ export default function CheckoutPage() {
 
               <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
                 <div className="space-y-6">
-                  <ShippingAddressForm value={endereco} onChange={setEndereco} />
-                  {tentouEnviar && !enderecoValido(endereco) && (
+                  {user ? (
+                    <LoggedInAddressSection
+                      userId={user.id}
+                      userName={user.nome}
+                      selectedId={enderecoSelecionado?.id ?? null}
+                      onSelect={handleSelecionarEndereco}
+                    />
+                  ) : (
+                    <ShippingAddressForm value={endereco} onChange={setEndereco} />
+                  )}
+                  {tentouEnviar && !enderecoOk && (
                     <p className="-mt-3 text-sm font-medium text-destructive">
-                      Preencha todos os campos obrigatórios do endereço.
+                      {user ? 'Selecione ou cadastre um endereço de entrega.' : 'Preencha todos os campos obrigatórios do endereço.'}
                     </p>
                   )}
 

@@ -23,6 +23,20 @@ export interface PerfilSensorial {
   updated_at: string;
 }
 
+export interface EnderecoSalvo {
+  id: string;
+  user_id: string;
+  endereco: string;
+  numero: string;
+  complemento: string;
+  bairro: string;
+  cidade: string;
+  estado: string;
+  cep: string;
+  padrao: boolean;
+  created_at: string;
+}
+
 export interface Produtor {
   id: string;
   nome: string;

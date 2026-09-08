@@ -61,11 +61,11 @@ export function ProductDetail({ cafe }: { cafe: Cafe }) {
         <SiteHeader />
 
         <div className="px-[38px] py-[22px] pb-[70px]">
-        <div className="text-[11.5px] text-pg-text-tertiary mb-5">
+        <div className="text-[11.5px] text-pg-text-tertiary mb-5 max-w-[1180px] mx-auto">
           <Link href="/loja" className="hover:text-pg-terracotta">Loja</Link> · {cafe.formato ?? 'Grãos'} · <span className="text-[#5E6A5C]">{cafe.nome}</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-[34px] items-start max-w-[1180px]">
+        <div className="grid grid-cols-2 gap-[34px] items-start max-w-[1180px] mx-auto">
           <div className="flex flex-col gap-4">
             <div
               className="h-[420px] rounded-[3px] bg-[#E7DFD1] bg-cover bg-center flex items-center justify-center text-[10px] tracking-[.12em] text-[#A79A88]"

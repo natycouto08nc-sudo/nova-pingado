@@ -1,5 +1,7 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ESTADOS_BRASIL } from '@/lib/estados-brasil';
 
 export interface EnderecoEntrega {
   nomeCompleto: string;
@@ -55,7 +57,26 @@ export function ShippingAddressForm({ value, onChange }: ShippingAddressFormProp
         {campo('Complemento (opcional)', value.complemento, (v) => set('complemento', v), 'complemento')}
         {campo('Bairro', value.bairro, (v) => set('bairro', v), 'bairro')}
         {campo('Cidade', value.cidade, (v) => set('cidade', v), 'cidade')}
-        {campo('Estado', value.estado, (v) => set('estado', v), 'estado', { maxLength: 2 })}
+
+        <div className="space-y-1.5">
+          <Label htmlFor="estado">Estado</Label>
+          <Select
+            items={ESTADOS_BRASIL.map((estado) => ({ label: estado.sigla, value: estado.sigla }))}
+            value={value.estado || null}
+            onValueChange={(v) => set('estado', (v as string) ?? '')}
+          >
+            <SelectTrigger id="estado">
+              <SelectValue placeholder="Selecione" />
+            </SelectTrigger>
+            <SelectContent>
+              {ESTADOS_BRASIL.map((estado) => (
+                <SelectItem key={estado.sigla} value={estado.sigla}>
+                  {estado.sigla} — {estado.nome}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   );
