@@ -1,17 +1,53 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Check, ChevronRight, ShoppingCart, Star } from 'lucide-react';
+
 import type { Cafe } from '@/lib/types';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
+import { WhatsAppButton } from '@/components/whatsapp-button';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useCart } from '@/context/cart-context';
 import { useAuth } from '@/context/auth-context';
 import { SENS_AXES, REFERENCE_PROFILES, ROTULOS_INTENSIDADE, getReferenceProfile } from '@/lib/pingado/profiles';
 import { matchPct, cafeSensoryValues } from '@/lib/pingado/selection';
 import { getMetodosPreparo, getCertificacoes, AVALIACOES_PRODUTO } from '@/lib/pingado/crm-data';
-import { brl, estrelasTexto } from '@/lib/pingado/format';
+import { brl } from '@/lib/pingado/format';
+import { cn } from '@/lib/utils';
+
+const FORMATO_LABEL: Record<string, string> = {
+  graos: 'Grãos',
+  moido: 'Moído',
+  drip: 'Drip Coffee',
+  capsula: 'Cápsulas',
+};
+
+/** Botão de opção (tamanho, moagem) no padrão de pílula da loja. */
+function OptionButton({
+  children, selected, disabled, onClick,
+}: { children: React.ReactNode; selected: boolean; disabled?: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      aria-pressed={selected}
+      className={cn(
+        'cursor-pointer rounded-full border px-4 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-40',
+        selected
+          ? 'border-primary bg-primary text-primary-foreground'
+          : 'border-border bg-background text-foreground/80 hover:border-primary/50 hover:text-foreground',
+      )}
+    >
+      {children}
+    </button>
+  );
+}
 
 export function ProductDetail({ cafe }: { cafe: Cafe }) {
   const router = useRouter();
@@ -41,6 +77,7 @@ export function ProductDetail({ cafe }: { cafe: Cafe }) {
   const notaMedia = avaliacoes.length ? avaliacoes.reduce((a, b) => a + b.estrelas, 0) / avaliacoes.length : null;
 
   const certificacoes = getCertificacoes(cafe);
+  const formato = FORMATO_LABEL[cafe.formato ?? 'graos'] ?? cafe.formato ?? 'Grãos';
 
   function handleAdd(comprarAgora: boolean) {
     if (semEstoque) return;
@@ -55,142 +92,207 @@ export function ProductDetail({ cafe }: { cafe: Cafe }) {
     setTimeout(() => setAdicionado(false), 2000);
   }
 
+  const ficha = [
+    { label: 'Produtor', valor: cafe.produtores?.nome ?? cafe.fazenda ?? '—' },
+    { label: 'Região', valor: cafe.regiao ?? '—' },
+    { label: 'Altitude', valor: cafe.altitude ?? '—' },
+    { label: 'Variedade', valor: cafe.variedade ?? '—' },
+    { label: 'Beneficiamento', valor: cafe.processo ?? '—' },
+    { label: 'Torra', valor: cafe.torra ?? '—' },
+    { label: 'Pontuação SCA', valor: cafe.score_sca ? `${cafe.score_sca} pontos` : 'Não informada' },
+    { label: 'Estoque', valor: `${cafe.estoque ?? 0} pacotes` },
+  ];
+
   return (
-    <div className="min-h-screen bg-pg-bg font-pg-ui flex flex-col justify-between">
-      <div>
-        <SiteHeader />
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <SiteHeader />
 
-        <div className="px-[38px] py-[22px] pb-[70px]">
-        <div className="text-[11.5px] text-pg-text-tertiary mb-5 max-w-[1180px] mx-auto">
-          <Link href="/loja" className="hover:text-pg-terracotta">Loja</Link> · {cafe.formato ?? 'Grãos'} · <span className="text-[#5E6A5C]">{cafe.nome}</span>
-        </div>
+      <main className="flex-1">
+        <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-12">
+          <nav aria-label="Você está em" className="mb-8">
+            <ol className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
+              <li><Link href="/" className="transition-colors hover:text-primary">Início</Link></li>
+              <li aria-hidden="true"><ChevronRight size={14} /></li>
+              <li><Link href="/loja" className="transition-colors hover:text-primary">Loja</Link></li>
+              <li aria-hidden="true"><ChevronRight size={14} /></li>
+              <li aria-current="page" className="text-foreground">{cafe.nome}</li>
+            </ol>
+          </nav>
 
-        <div className="grid grid-cols-2 gap-[34px] items-start max-w-[1180px] mx-auto">
-          <div className="flex flex-col gap-4">
-            <div
-              className="h-[420px] rounded-[3px] bg-[#E7DFD1] bg-cover bg-center flex items-center justify-center text-[10px] tracking-[.12em] text-[#A79A88]"
-              style={cafe.imagem_url ? { backgroundImage: `url(${cafe.imagem_url})` } : undefined}
-            >
-              {!cafe.imagem_url && 'FOTO DO PRODUTO'}
-            </div>
+          <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
+            {/* Coluna da imagem + ficha técnica */}
+            <div className="flex flex-col gap-6">
+              <div className="relative aspect-square overflow-hidden rounded-2xl bg-muted">
+                <Image
+                  src={cafe.imagem_url ?? '/placeholder.jpg'}
+                  alt={`Pacote de café Pingado ${cafe.nome}`}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 45vw, 100vw"
+                  className="object-cover"
+                />
+                {cafe.badge && (
+                  <Badge className="absolute top-4 left-4 bg-gold text-gold-foreground">{cafe.badge}</Badge>
+                )}
+              </div>
 
-            <div className="bg-pg-surface border border-[rgba(28,46,35,.10)] rounded-[3px] px-[22px] py-5">
-              <div className="font-pg-display text-[22px] text-pg-green mb-[14px]">Perfil sensorial</div>
-              {temSensorial ? (
-                <>
-                  <div className="flex flex-wrap gap-[6px] mb-[18px]">
-                    {(cafe.notas_sensoriais ?? []).map((n) => (
-                      <span key={n} className="text-[11px] px-[10px] py-[5px] border border-[rgba(28,46,35,.16)] rounded-[2px] text-[#5E6A5C]">{n}</span>
-                    ))}
-                  </div>
-                  {SENS_AXES.map((axis) => (
-                    <div key={axis.key} className="grid grid-cols-[88px_1fr_auto] gap-[14px] items-center py-[6px]">
-                      <span className="text-[12.5px] text-[#3C4A3E]">{axis.label}</span>
-                      <div className="flex gap-[5px]">
-                        {[1, 2, 3, 4, 5].map((n) => (
-                          <span key={n} className="w-[9px] h-[9px] rounded-full" style={{ background: n <= sens[axis.key] ? '#C0562B' : '#DED5C6' }} />
+              <section className="rounded-2xl border border-border bg-card p-6 md:p-8">
+                <h2 className="font-serif text-2xl">Perfil sensorial</h2>
+                {temSensorial ? (
+                  <>
+                    {(cafe.notas_sensoriais ?? []).length > 0 && (
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {(cafe.notas_sensoriais ?? []).map((n) => (
+                          <Badge key={n} variant="outline" className="h-6 px-3 font-normal text-muted-foreground">{n}</Badge>
                         ))}
                       </div>
-                      <span className="text-[11px] text-pg-text-tertiary">{ROTULOS_INTENSIDADE[sens[axis.key]]}</span>
+                    )}
+                    <dl className="mt-6 flex flex-col gap-3">
+                      {SENS_AXES.map((axis) => (
+                        <div key={axis.key} className="grid grid-cols-[100px_1fr_auto] items-center gap-4">
+                          <dt className="text-sm">{axis.label}</dt>
+                          <dd className="flex gap-1.5" aria-label={`${sens[axis.key]} de 5`}>
+                            {[1, 2, 3, 4, 5].map((n) => (
+                              <span
+                                key={n}
+                                aria-hidden="true"
+                                className={cn('size-2.5 rounded-full', n <= sens[axis.key] ? 'bg-primary' : 'bg-muted')}
+                              />
+                            ))}
+                          </dd>
+                          <dd className="text-sm text-muted-foreground">{ROTULOS_INTENSIDADE[sens[axis.key]]}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </>
+                ) : (
+                  <p className="mt-3 text-sm text-muted-foreground">
+                    Este café ainda não tem ficha sensorial cadastrada.
+                  </p>
+                )}
+
+                <h3 className="mt-8 border-t border-border pt-6 font-serif text-xl">Ficha técnica</h3>
+                <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4">
+                  {ficha.map((s) => (
+                    <div key={s.label}>
+                      <dt className="text-xs text-muted-foreground">{s.label}</dt>
+                      <dd className="mt-0.5 text-sm">{s.valor}</dd>
                     </div>
                   ))}
-                  <div className="h-px bg-[rgba(28,46,35,.09)] my-4" />
-                </>
-              ) : (
-                <p className="text-[12.5px] text-pg-text-secondary mb-4">Este produto ainda não tem ficha sensorial cadastrada.</p>
+                </dl>
+              </section>
+            </div>
+
+            {/* Coluna de compra */}
+            <div className="lg:sticky lg:top-28">
+              <p className="kicker text-primary">Cafés especiais · {formato}</p>
+              <h1 className="mt-4 font-serif text-3xl leading-[1.1] text-balance md:text-5xl">{cafe.nome}</h1>
+
+              {(notaMedia != null || match != null) && (
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  {notaMedia != null && (
+                    <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <span className="flex" aria-hidden="true">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <Star key={n} size={14} className={n <= Math.round(notaMedia) ? 'fill-gold text-gold' : 'text-border'} />
+                        ))}
+                      </span>
+                      <span className="sr-only">Nota</span>
+                      {notaMedia.toFixed(1).replace('.', ',')} · {avaliacoes.length} {avaliacoes.length === 1 ? 'avaliação' : 'avaliações'}
+                    </p>
+                  )}
+                  {match != null && (
+                    <Badge className="bg-secondary text-secondary-foreground">{match}% com o seu perfil</Badge>
+                  )}
+                </div>
               )}
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { label: 'Produtor', valor: cafe.produtores?.nome ?? cafe.fazenda ?? '—' },
-                  { label: 'Região', valor: cafe.regiao ?? '—' },
-                  { label: 'Altitude', valor: cafe.altitude ?? '—' },
-                  { label: 'Variedade', valor: cafe.variedade ?? '—' },
-                  { label: 'Beneficiamento', valor: cafe.processo ?? '—' },
-                  { label: 'Torra', valor: cafe.torra ?? '—' },
-                  { label: 'Pontuação SCA', valor: cafe.score_sca ? `${cafe.score_sca} pontos` : 'não informada' },
-                  { label: 'Estoque', valor: `${cafe.estoque ?? 0} pacotes` },
-                ].map((s) => (
-                  <div key={s.label}>
-                    <div className="text-[9.5px] tracking-[.14em] uppercase text-pg-text-tertiary">{s.label}</div>
-                    <div className="text-[13px] text-pg-text mt-[3px]">{s.valor}</div>
+
+              {cafe.descricao && (
+                <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground text-pretty">{cafe.descricao}</p>
+              )}
+
+              <div className="mt-8 border-t border-border pt-6">
+                <p className="font-serif text-4xl text-primary">{brl(precoUnitario)}</p>
+                <p className="mt-1 text-sm text-muted-foreground">ou 3x de {brl(precoUnitario / 3)} sem juros</p>
+              </div>
+
+              {variantes.length > 0 && (
+                <fieldset className="mt-7">
+                  <legend className="kicker mb-3 text-muted-foreground">Tamanho</legend>
+                  <div className="flex flex-wrap gap-2">
+                    {variantes.map((v) => (
+                      <OptionButton key={v.id} selected={varianteId === v.id} disabled={!v.disponivel} onClick={() => setVarianteId(v.id)}>
+                        {v.peso}
+                      </OptionButton>
+                    ))}
                   </div>
-                ))}
+                </fieldset>
+              )}
+
+              {metodosOpcoes.length > 0 && (
+                <fieldset className="mt-6">
+                  <legend className="kicker mb-3 text-muted-foreground">Como você quer receber</legend>
+                  <div className="flex flex-wrap gap-2">
+                    {metodosOpcoes.map((m) => (
+                      <OptionButton key={m} selected={metodo === m} onClick={() => setMetodo(m)}>
+                        {m}
+                      </OptionButton>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+
+              <div className="mt-8 flex max-w-md flex-col gap-3">
+                <Button
+                  size="lg"
+                  className="h-12 px-6 text-base"
+                  disabled={semEstoque}
+                  onClick={() => handleAdd(false)}
+                >
+                  {semEstoque ? (
+                    'Fora de estoque'
+                  ) : adicionado ? (
+                    <><Check data-icon="inline-start" /> Adicionado ao carrinho</>
+                  ) : (
+                    <><ShoppingCart data-icon="inline-start" /> Adicionar ao carrinho</>
+                  )}
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-12 px-6 text-base"
+                  disabled={semEstoque}
+                  onClick={() => handleAdd(true)}
+                >
+                  Comprar agora
+                </Button>
               </div>
-            </div>
-          </div>
 
-          <div>
-            <div className="text-[9.5px] tracking-[.18em] uppercase text-pg-terracotta-text">Cafés especiais · {cafe.formato ?? 'Grãos'}</div>
-            <h1 className="font-pg-display font-medium text-[38px] mt-2 mb-0 text-pg-green leading-[1.1]">{cafe.nome}</h1>
-            <p className="mt-[10px] text-[13.5px] text-pg-text-secondary leading-[1.6] max-w-[52ch]">{cafe.descricao}</p>
-
-            <div className="flex items-center gap-[10px] mt-[14px]">
-              {notaMedia != null && (
-                <>
-                  <span className="text-[13px] text-pg-terracotta tracking-[.1em]">{estrelasTexto(notaMedia)}</span>
-                  <span className="text-xs text-pg-text-secondary">{notaMedia.toFixed(1).replace('.', ',')} · {avaliacoes.length} avaliações</span>
-                </>
-              )}
-              {match != null && (
-                <span className="text-[9.5px] tracking-[.1em] uppercase px-2 py-1 rounded-[2px] bg-pg-green text-pg-cream">{match}% com o seu perfil</span>
-              )}
-            </div>
-
-            <div className="font-pg-display text-[34px] text-pg-terracotta mt-5">{brl(precoUnitario)}</div>
-            <div className="text-[11.5px] text-pg-text-tertiary mt-1">ou 3x de {brl(precoUnitario / 3)} sem juros</div>
-
-            {variantes.length > 0 && (
-              <div className="mt-[22px]">
-                <div className="text-[10px] tracking-[.14em] uppercase text-pg-text-label mb-2">Tamanho</div>
-                <div className="flex gap-2">
-                  {variantes.map((v) => (
-                    <button key={v.id} disabled={!v.disponivel} onClick={() => setVarianteId(v.id)}
-                      className={`cursor-pointer text-[12.5px] px-[18px] py-[9px] rounded-[2px] border transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${varianteId === v.id ? 'bg-pg-terracotta border-pg-terracotta text-white' : 'bg-pg-field border-[rgba(28,46,35,.18)] text-[#3C4A3E]'}`}>
-                      {v.peso}
-                    </button>
+              <section className="mt-8 max-w-md rounded-2xl border border-border bg-card p-6">
+                <p className="kicker text-muted-foreground">Quem plantou</p>
+                <h2 className="mt-2 font-serif text-xl">{cafe.produtores?.nome ?? cafe.fazenda ?? 'Produtor parceiro'}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {[cafe.regiao, cafe.altitude, cafe.variedade].filter(Boolean).join(' · ')}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {(certificacoes.length ? certificacoes : ['Sem certificação declarada']).map((c) => (
+                    <Badge key={c} variant="outline" className="font-normal text-muted-foreground">{c}</Badge>
                   ))}
                 </div>
-              </div>
-            )}
-
-            {metodosOpcoes.length > 0 && (
-              <div className="mt-[18px]">
-                <div className="text-[10px] tracking-[.14em] uppercase text-pg-text-label mb-2">Como você quer receber</div>
-                <div className="flex flex-wrap gap-2">
-                  {metodosOpcoes.map((m) => (
-                    <button key={m} onClick={() => setMetodo(m)}
-                      className={`cursor-pointer text-xs px-[14px] py-2 rounded-[2px] border transition-colors ${metodo === m ? 'bg-pg-terracotta border-pg-terracotta text-white' : 'bg-pg-field border-[rgba(28,46,35,.18)] text-[#3C4A3E]'}`}>
-                      {m}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="flex flex-col gap-[10px] mt-6 max-w-[420px]">
-              <button disabled={semEstoque} onClick={() => handleAdd(false)} className="cursor-pointer border-0 bg-pg-green text-pg-cream-2 text-[13px] py-[14px] rounded-[2px] disabled:opacity-50 disabled:cursor-not-allowed">
-                {semEstoque ? 'Fora de estoque' : adicionado ? 'Adicionado ✓' : 'Adicionar ao carrinho'}
-              </button>
-              <button disabled={semEstoque} onClick={() => handleAdd(true)} className="cursor-pointer border border-[rgba(28,46,35,.24)] bg-transparent text-pg-green text-[13px] py-[14px] rounded-[2px] disabled:opacity-50 disabled:cursor-not-allowed">
-                Comprar agora
-              </button>
-            </div>
-
-            <div className="bg-pg-surface border border-[rgba(28,46,35,.10)] rounded-[3px] px-[18px] py-4 mt-[22px] max-w-[420px]">
-              <div className="text-[9.5px] tracking-[.14em] uppercase text-pg-text-tertiary mb-2">Produtor</div>
-              <div className="text-sm text-pg-text">{cafe.produtores?.nome ?? cafe.fazenda ?? '—'}</div>
-              <div className="text-xs text-pg-text-secondary mt-1">{[cafe.regiao, cafe.altitude, cafe.variedade].filter(Boolean).join(' · ')}</div>
-              <div className="flex flex-wrap gap-[6px] mt-[10px]">
-                {(certificacoes.length ? certificacoes : ['sem certificação declarada']).map((c) => (
-                  <span key={c} className="text-[10px] px-2 py-[3px] rounded-[2px] bg-pg-success-bg text-pg-success-fg">{c}</span>
-                ))}
-              </div>
+                <Link
+                  href="/produtores"
+                  className="mt-5 inline-block text-sm text-primary underline underline-offset-4 transition-colors hover:text-primary/80"
+                >
+                  Conheça nossos produtores
+                </Link>
+              </section>
             </div>
           </div>
         </div>
-      </div>
-      </div>
+      </main>
+
       <SiteFooter />
+      <WhatsAppButton />
     </div>
   );
 }
