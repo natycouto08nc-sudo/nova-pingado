@@ -43,18 +43,18 @@ function rotaDoPapel(papel: PapelUsuario) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="flex flex-col gap-[7px]">
-      <span className="text-[10px] tracking-[0.12em] uppercase text-pg-text-label">{label}</span>
+      <span className="text-[10px] tracking-[0.12em] uppercase text-muted-foreground">{label}</span>
       {children}
     </label>
   );
 }
 
-const inputCls = 'border border-[rgba(28,46,35,.2)] bg-pg-field rounded-[2px] px-[14px] py-[13px] text-sm text-pg-text placeholder:text-pg-text-tertiary focus:outline-none focus:border-pg-terracotta transition-colors';
+const inputCls = 'border border-border bg-background rounded-2xl px-[14px] py-[13px] text-sm text-foreground placeholder:text-muted-foreground/80 focus:outline-none focus:border-primary transition-colors';
 
 function ErroBox({ erro }: { erro: string }) {
   if (!erro) return null;
   return (
-    <div className="text-xs text-pg-error-fg bg-pg-error-bg border border-[rgba(155,58,44,.24)] rounded-[2px] px-[11px] py-[9px]">
+    <div className="text-xs text-destructive bg-destructive/10 border border-destructive/20 rounded-full px-[11px] py-[9px]">
       {erro}
     </div>
   );
@@ -65,8 +65,8 @@ function Chip({ label, active, onClick }: { label: string; active: boolean; onCl
     <button
       type="button"
       onClick={onClick}
-      className={`cursor-pointer text-xs px-[12px] py-[8px] rounded-[2px] border transition-colors ${
-        active ? 'bg-pg-terracotta border-pg-terracotta text-white' : 'bg-pg-field border-[rgba(28,46,35,.18)] text-[#3C4A3E]'
+      className={`cursor-pointer text-xs px-[12px] py-[8px] rounded-full border transition-colors ${
+        active ? 'bg-primary border-primary text-white' : 'bg-background border-border text-foreground'
       }`}
     >
       {label}
@@ -82,8 +82,8 @@ function Dots({ value, onChange }: { value: number; onChange: (n: number) => voi
           key={n}
           type="button"
           onClick={() => onChange(n)}
-          className={`cursor-pointer w-7 h-7 rounded-[2px] text-[11.5px] border transition-colors ${
-            value === n ? 'bg-pg-terracotta border-pg-terracotta text-white' : 'bg-pg-field border-[rgba(28,46,35,.18)] text-[#5E6A5C]'
+          className={`cursor-pointer w-7 h-7 rounded-full text-[11.5px] border transition-colors ${
+            value === n ? 'bg-primary border-primary text-white' : 'bg-background border-border text-muted-foreground'
           }`}
         >
           {n}
@@ -203,31 +203,31 @@ export default function LoginPage() {
   const mostrarTabs = passo === 'email' || passo === 'cadastro';
 
   return (
-    <div className="min-h-screen bg-pg-green flex flex-col justify-between text-pg-cream font-pg-ui">
+    <div className="min-h-screen bg-secondary flex flex-col justify-between text-secondary-foreground font-sans">
       <SiteHeader />
       <div className="flex-1 flex flex-col items-center justify-center py-[50px] px-6">
-        <div className="font-pg-display text-2xl tracking-[.42em] text-pg-cream-2">PINGADO</div>
-        <div className="text-[10px] tracking-[.24em] uppercase text-[#8FA394] mt-[9px]">Plataforma de assinatura de cafés especiais</div>
+        <div className="font-serif text-2xl tracking-[.42em] text-secondary-foreground">PINGADO</div>
+        <div className="text-[10px] tracking-[.24em] uppercase text-muted-foreground mt-[9px]">Plataforma de assinatura de cafés especiais</div>
 
-        <div className="w-[440px] max-w-full bg-pg-surface rounded-[4px] mt-7 text-pg-text overflow-hidden shadow-lg border border-[rgba(28,46,35,.15)]">
-          <div className="px-6 py-[15px] border-b border-[rgba(28,46,35,.10)] flex items-center gap-3">
+        <div className="w-[440px] max-w-full bg-card rounded-3xl mt-7 text-foreground overflow-hidden shadow-lg border border-border">
+          <div className="px-6 py-[15px] border-b border-border flex items-center gap-3">
           {podeVoltar && (
-            <button onClick={voltar} className="cursor-pointer border-0 bg-transparent p-0 text-lg leading-none text-[#5E6A5C]" aria-label="Voltar">‹</button>
+            <button onClick={voltar} className="cursor-pointer border-0 bg-transparent p-0 text-lg leading-none text-muted-foreground" aria-label="Voltar">‹</button>
           )}
-          <div className="text-[12.5px] tracking-[.06em] text-[#3C4A3E]">{texto.titulo}</div>
+          <div className="text-[12.5px] tracking-[.06em] text-foreground">{texto.titulo}</div>
         </div>
 
         {mostrarTabs && (
-          <div className="grid grid-cols-2 bg-pg-surface-alt border-b border-[rgba(28,46,35,.10)]">
+          <div className="grid grid-cols-2 bg-muted/40 border-b border-border">
             <button
               onClick={() => irAba('email')}
-              className={`cursor-pointer border-0 border-b-2 text-[13px] py-[13px] px-[10px] ${abaAtiva === 'email' ? 'bg-pg-surface text-pg-green border-pg-terracotta' : 'bg-transparent text-pg-text-secondary border-transparent'}`}
+              className={`cursor-pointer border-0 border-b-2 text-[13px] py-[13px] px-[10px] ${abaAtiva === 'email' ? 'bg-card text-foreground border-primary' : 'bg-transparent text-muted-foreground border-transparent'}`}
             >
               Entrar
             </button>
             <button
               onClick={() => irAba('cadastro')}
-              className={`cursor-pointer border-0 border-b-2 text-[13px] py-[13px] px-[10px] ${abaAtiva === 'cadastro' ? 'bg-pg-surface text-pg-green border-pg-terracotta' : 'bg-transparent text-pg-text-secondary border-transparent'}`}
+              className={`cursor-pointer border-0 border-b-2 text-[13px] py-[13px] px-[10px] ${abaAtiva === 'cadastro' ? 'bg-card text-foreground border-primary' : 'bg-transparent text-muted-foreground border-transparent'}`}
             >
               Criar conta
             </button>
@@ -235,7 +235,7 @@ export default function LoginPage() {
         )}
 
         <div className="px-7 pt-[26px] pb-7">
-          <h1 className="font-pg-display font-medium text-[29px] leading-[1.15] text-pg-green m-0">{texto.headline}</h1>
+          <h1 className="font-serif font-medium text-[29px] leading-[1.15] text-foreground m-0">{texto.headline}</h1>
 
           {passo === 'email' && (
             <div className="mt-5 flex flex-col gap-[14px]">
@@ -246,23 +246,23 @@ export default function LoginPage() {
                 <input type="password" className={inputCls} value={senha} onChange={(e) => { setSenha(e.target.value); setErro(''); }} placeholder="••••••••" />
               </Field>
               <ErroBox erro={erro} />
-              <button disabled={loading} onClick={() => handleEntrarSenha()} className="cursor-pointer border-0 bg-pg-terracotta hover:bg-pg-terracotta-hover text-white text-[13.5px] py-[14px] rounded-[2px] transition-colors disabled:opacity-60">
+              <button disabled={loading} onClick={() => handleEntrarSenha()} className="cursor-pointer border-0 bg-primary hover:bg-primary-hover text-white text-[13.5px] py-[14px] rounded-full transition-colors disabled:opacity-60">
                 Entrar
               </button>
               <div className="flex items-center justify-between gap-3">
-                <button onClick={handleEnviarLink} className="cursor-pointer border-0 bg-transparent p-0 text-[12.5px] text-pg-terracotta">Entrar sem senha · link mágico</button>
-                <span className="text-xs text-pg-text-tertiary">Esqueci minha senha</span>
+                <button onClick={handleEnviarLink} className="cursor-pointer border-0 bg-transparent p-0 text-[12.5px] text-primary">Entrar sem senha · link mágico</button>
+                <span className="text-xs text-muted-foreground/80">Esqueci minha senha</span>
               </div>
 
-              <div className="mt-2 pt-4 border-t border-[rgba(28,46,35,.08)] flex flex-col gap-2">
-                <div className="text-[10px] tracking-[.12em] uppercase text-pg-text-label">Contas de demonstração</div>
+              <div className="mt-2 pt-4 border-t border-border flex flex-col gap-2">
+                <div className="text-[10px] tracking-[.12em] uppercase text-muted-foreground">Contas de demonstração</div>
                 {DEMOS.map((d) => (
                   <button
                     key={d.email}
                     onClick={() => usarDemo(d.email)}
-                    className="cursor-pointer text-left border border-[rgba(28,46,35,.14)] hover:border-pg-terracotta bg-pg-field rounded-[2px] px-3 py-2 text-[12px] text-pg-text-secondary transition-colors"
+                    className="cursor-pointer text-left border border-border hover:border-primary bg-background rounded-full px-3 py-2 text-[12px] text-muted-foreground transition-colors"
                   >
-                    <span className="text-pg-text">{d.email}</span> · {d.tipo}
+                    <span className="text-foreground">{d.email}</span> · {d.tipo}
                   </button>
                 ))}
               </div>
@@ -271,19 +271,19 @@ export default function LoginPage() {
 
           {passo === 'metodo' && (
             <div className="mt-5 flex flex-col gap-[10px]">
-              <button onClick={handleEnviarLink} className="cursor-pointer text-left border border-pg-terracotta bg-pg-accent-bg rounded-[3px] px-[18px] py-4">
+              <button onClick={handleEnviarLink} className="cursor-pointer text-left border border-primary bg-muted/40 rounded-3xl px-[18px] py-4">
                 <div className="flex items-center justify-between gap-[10px]">
-                  <span className="text-[14.5px] text-pg-green">Receber link mágico por e-mail</span>
-                  <span className="text-[9.5px] tracking-[.12em] uppercase px-[7px] py-[3px] rounded-[2px] bg-pg-terracotta text-white">recomendado</span>
+                  <span className="text-[14.5px] text-foreground">Receber link mágico por e-mail</span>
+                  <span className="text-[9.5px] tracking-[.12em] uppercase px-[7px] py-[3px] rounded-full bg-primary text-white">recomendado</span>
                 </div>
-                <div className="text-xs text-pg-accent-fg mt-[6px] leading-[1.5]">Um clique no e-mail e você entra. Sem senha, válido por 15 minutos.</div>
+                <div className="text-xs text-foreground mt-[6px] leading-[1.5]">Um clique no e-mail e você entra. Sem senha, válido por 15 minutos.</div>
               </button>
-              <button onClick={() => setPasso('senha')} className="cursor-pointer text-left border border-[rgba(28,46,35,.2)] bg-pg-field rounded-[3px] px-[18px] py-4">
-                <div className="text-[14.5px] text-pg-green">Entrar com minha senha</div>
-                <div className="text-xs text-pg-text-secondary mt-[6px] leading-[1.5]">Use a senha cadastrada para esta conta.</div>
+              <button onClick={() => setPasso('senha')} className="cursor-pointer text-left border border-border bg-background rounded-3xl px-[18px] py-4">
+                <div className="text-[14.5px] text-foreground">Entrar com minha senha</div>
+                <div className="text-xs text-muted-foreground mt-[6px] leading-[1.5]">Use a senha cadastrada para esta conta.</div>
               </button>
-              <div className="text-[11.5px] text-pg-text-tertiary mt-[6px]">
-                Conta identificada: <span className="text-[#3C4A3E]">{email}</span> · perfil {perfilDetectado}
+              <div className="text-[11.5px] text-muted-foreground/80 mt-[6px]">
+                Conta identificada: <span className="text-foreground">{email}</span> · perfil {perfilDetectado}
               </div>
             </div>
           )}
@@ -294,30 +294,30 @@ export default function LoginPage() {
                 <input type="password" className={inputCls} value={senha} onChange={(e) => { setSenha(e.target.value); setErro(''); }} placeholder="••••••••" />
               </Field>
               <ErroBox erro={erro} />
-              <button disabled={loading} onClick={() => handleEntrarSenha()} className="cursor-pointer border-0 bg-pg-terracotta hover:bg-pg-terracotta-hover text-white text-[13.5px] py-[14px] rounded-[2px] transition-colors disabled:opacity-60">
+              <button disabled={loading} onClick={() => handleEntrarSenha()} className="cursor-pointer border-0 bg-primary hover:bg-primary-hover text-white text-[13.5px] py-[14px] rounded-full transition-colors disabled:opacity-60">
                 Entrar
               </button>
               <div className="flex items-center justify-between gap-3">
-                <button onClick={handleEnviarLink} className="cursor-pointer border-0 bg-transparent p-0 text-[12.5px] text-pg-terracotta">Prefiro o link mágico</button>
-                <span className="text-xs text-pg-text-tertiary">Esqueci minha senha</span>
+                <button onClick={handleEnviarLink} className="cursor-pointer border-0 bg-transparent p-0 text-[12.5px] text-primary">Prefiro o link mágico</button>
+                <span className="text-xs text-muted-foreground/80">Esqueci minha senha</span>
               </div>
             </div>
           )}
 
           {passo === 'enviado' && (
             <div className="mt-5 flex flex-col gap-[14px]">
-              <div className="border border-[rgba(28,46,35,.14)] bg-pg-field rounded-[3px] px-5 py-[18px]">
-                <div className="text-[9.5px] tracking-[.14em] uppercase text-pg-text-tertiary">Simulação da caixa de entrada</div>
-                <div className="font-pg-display text-xl text-pg-green mt-2">Seu acesso ao Pingado</div>
-                <p className="my-[6px] mb-[14px] text-[12.5px] text-pg-text-secondary leading-[1.55]">Para {email} · o link expira em 15 minutos e só funciona uma vez.</p>
-                <button disabled={loading} onClick={handleAbrirLink} className="cursor-pointer w-full border-0 bg-pg-green text-pg-cream-2 text-[13px] py-3 px-[18px] rounded-[2px] disabled:opacity-60">
+              <div className="border border-border bg-background rounded-3xl px-5 py-[18px]">
+                <div className="text-[9.5px] tracking-[.14em] uppercase text-muted-foreground/80">Simulação da caixa de entrada</div>
+                <div className="font-serif text-xl text-foreground mt-2">Seu acesso ao Pingado</div>
+                <p className="my-[6px] mb-[14px] text-[12.5px] text-muted-foreground leading-[1.55]">Para {email} · o link expira em 15 minutos e só funciona uma vez.</p>
+                <button disabled={loading} onClick={handleAbrirLink} className="cursor-pointer w-full border-0 bg-secondary text-secondary-foreground text-[13px] py-3 px-[18px] rounded-full disabled:opacity-60">
                   Entrar no Pingado
                 </button>
               </div>
               <ErroBox erro={erro} />
               <div className="flex items-center justify-between gap-3">
-                <button onClick={handleEnviarLink} className="cursor-pointer border-0 bg-transparent p-0 text-[12.5px] text-pg-terracotta">Reenviar link</button>
-                <button onClick={() => setPasso('senha')} className="cursor-pointer border-0 bg-transparent p-0 text-[12.5px] text-[#5E6A5C]">Usar senha em vez disso</button>
+                <button onClick={handleEnviarLink} className="cursor-pointer border-0 bg-transparent p-0 text-[12.5px] text-primary">Reenviar link</button>
+                <button onClick={() => setPasso('senha')} className="cursor-pointer border-0 bg-transparent p-0 text-[12.5px] text-muted-foreground">Usar senha em vez disso</button>
               </div>
             </div>
           )}
@@ -331,10 +331,10 @@ export default function LoginPage() {
                     <button
                       key={t}
                       onClick={() => { setContaTipo(t); setErro(''); }}
-                      className={`cursor-pointer text-left border rounded-[3px] px-[14px] py-3 ${on ? 'bg-pg-accent-bg border-pg-terracotta' : 'bg-pg-field border-[rgba(28,46,35,.18)]'}`}
+                      className={`cursor-pointer text-left border rounded-3xl px-[14px] py-3 ${on ? 'bg-muted/40 border-primary' : 'bg-background border-border'}`}
                     >
-                      <div className="text-[13.5px] text-pg-green">{t === 'cliente' ? 'Cliente' : 'Vendedor'}</div>
-                      <div className={`text-[11px] mt-[3px] ${on ? 'text-pg-accent-fg' : 'text-pg-text-secondary'}`}>
+                      <div className="text-[13.5px] text-foreground">{t === 'cliente' ? 'Cliente' : 'Vendedor'}</div>
+                      <div className={`text-[11px] mt-[3px] ${on ? 'text-foreground' : 'text-muted-foreground'}`}>
                         {t === 'cliente' ? 'Assinar e comprar cafés' : 'Vender meus cafés na plataforma'}
                       </div>
                     </button>
@@ -355,11 +355,11 @@ export default function LoginPage() {
               <label className="flex items-center gap-[10px] cursor-pointer select-none">
                 <span
                   onClick={() => setSemSenha((v) => !v)}
-                  className={`w-[16px] h-[16px] rounded-[2px] border flex-none flex items-center justify-center ${semSenha ? 'bg-pg-terracotta border-pg-terracotta' : 'bg-pg-field border-[rgba(28,46,35,.3)]'}`}
+                  className={`w-[16px] h-[16px] rounded-full border flex-none flex items-center justify-center ${semSenha ? 'bg-primary border-primary' : 'bg-background border-border'}`}
                 >
                   {semSenha && <span className="w-[8px] h-[8px] rounded-[1px] bg-white" />}
                 </span>
-                <span className="text-[12.5px] text-pg-text-secondary" onClick={() => setSemSenha((v) => !v)}>Criar conta sem senha · só link mágico</span>
+                <span className="text-[12.5px] text-muted-foreground" onClick={() => setSemSenha((v) => !v)}>Criar conta sem senha · só link mágico</span>
               </label>
               {!semSenha && (
                 <Field label="Senha">
@@ -367,10 +367,10 @@ export default function LoginPage() {
                 </Field>
               )}
               <ErroBox erro={erro} />
-              <button onClick={handleCriarConta} className="cursor-pointer border-0 bg-pg-terracotta hover:bg-pg-terracotta-hover text-white text-[13.5px] py-[14px] rounded-[2px] transition-colors">
+              <button onClick={handleCriarConta} className="cursor-pointer border-0 bg-primary hover:bg-primary-hover text-white text-[13.5px] py-[14px] rounded-full transition-colors">
                 {contaTipo === 'vendedor' ? 'Continuar · dados da torrefação' : 'Continuar · meu perfil sensorial'}
               </button>
-              <div className="text-[11.5px] text-pg-text-tertiary leading-[1.5]">Ao criar a conta você aceita os termos de uso e a política de privacidade do Pingado.</div>
+              <div className="text-[11.5px] text-muted-foreground/80 leading-[1.5]">Ao criar a conta você aceita os termos de uso e a política de privacidade do Pingado.</div>
             </div>
           )}
 
@@ -378,17 +378,17 @@ export default function LoginPage() {
             <div className="mt-5 flex flex-col gap-4">
               <div className="flex flex-col gap-[2px]">
                 {SENS_AXES.map((axis) => (
-                  <div key={axis.key} className="py-2 border-b border-[rgba(28,46,35,.08)]">
+                  <div key={axis.key} className="py-2 border-b border-border">
                     <div className="flex items-center justify-between gap-[10px]">
-                      <span className="text-[13px] text-pg-text">{axis.label}</span>
+                      <span className="text-[13px] text-foreground">{axis.label}</span>
                       <Dots value={quiz[axis.key]} onChange={(n) => setQuiz((q) => ({ ...q, [axis.key]: n }))} />
                     </div>
-                    <div className="text-[10.5px] text-pg-text-tertiary mt-[5px]">{axis.left} → {axis.right}</div>
+                    <div className="text-[10.5px] text-muted-foreground/80 mt-[5px]">{axis.left} → {axis.right}</div>
                   </div>
                 ))}
               </div>
               <div>
-                <div className="text-[10px] tracking-[.12em] uppercase text-pg-text-label mb-2">Alguma restrição?</div>
+                <div className="text-[10px] tracking-[.12em] uppercase text-muted-foreground mb-2">Alguma restrição?</div>
                 <div className="flex flex-wrap gap-[7px]">
                   {RESTRICOES_QUIZ.map((r) => (
                     <Chip key={r} label={r} active={quizRestricoes.includes(r)} onClick={() => toggleRestricao(r)} />
@@ -396,14 +396,14 @@ export default function LoginPage() {
                 </div>
               </div>
               <div>
-                <div className="text-[10px] tracking-[.12em] uppercase text-pg-text-label mb-2">Plano da assinatura</div>
+                <div className="text-[10px] tracking-[.12em] uppercase text-muted-foreground mb-2">Plano da assinatura</div>
                 <div className="flex gap-[7px]">
                   {PLANOS_ASSINATURA.map((p) => (
                     <Chip key={p} label={p} active={contaPlano === p} onClick={() => setContaPlano(p)} />
                   ))}
                 </div>
               </div>
-              <button onClick={handleConcluirQuiz} className="cursor-pointer border-0 bg-pg-terracotta hover:bg-pg-terracotta-hover text-white text-[13.5px] py-[14px] rounded-[2px] transition-colors">
+              <button onClick={handleConcluirQuiz} className="cursor-pointer border-0 bg-primary hover:bg-primary-hover text-white text-[13.5px] py-[14px] rounded-full transition-colors">
                 Ver meu perfil sensorial
               </button>
             </div>
@@ -423,7 +423,7 @@ export default function LoginPage() {
                 <input className={inputCls} value={lojaCapacidade} onChange={(e) => { setLojaCapacidade(e.target.value); setErro(''); }} placeholder="400" />
               </Field>
               <div>
-                <div className="text-[10px] tracking-[.12em] uppercase text-pg-text-label mb-2">Quero vender em</div>
+                <div className="text-[10px] tracking-[.12em] uppercase text-muted-foreground mb-2">Quero vender em</div>
                 <div className="flex flex-wrap gap-[7px]">
                   {(['Vitrine', 'Assinatura'] as const).map((c) => (
                     <Chip key={c} label={c} active={lojaCanais.includes(c)} onClick={() => toggleCanal(c)} />
@@ -431,7 +431,7 @@ export default function LoginPage() {
                 </div>
               </div>
               <ErroBox erro={erro} />
-              <button onClick={handleConcluirLoja} className="cursor-pointer border-0 bg-pg-terracotta hover:bg-pg-terracotta-hover text-white text-[13.5px] py-[14px] rounded-[2px] transition-colors">
+              <button onClick={handleConcluirLoja} className="cursor-pointer border-0 bg-primary hover:bg-primary-hover text-white text-[13.5px] py-[14px] rounded-full transition-colors">
                 Criar meu painel de vendedor
               </button>
             </div>
@@ -439,14 +439,14 @@ export default function LoginPage() {
 
           {passo === 'pronto' && (
             <div className="mt-5 flex flex-col gap-[14px]">
-              <div className="border border-[rgba(192,86,43,.3)] bg-pg-accent-bg rounded-[3px] px-5 py-[18px]">
-                <div className="text-[9.5px] tracking-[.14em] uppercase text-pg-terracotta-text">
+              <div className="border border-primary/40 bg-muted/40 rounded-3xl px-5 py-[18px]">
+                <div className="text-[9.5px] tracking-[.14em] uppercase text-primary">
                   {contaTipo === 'vendedor' ? 'Painel liberado' : 'Perfil sensorial mapeado'}
                 </div>
-                <div className="font-pg-display text-2xl text-pg-green mt-[7px] leading-[1.15]">
+                <div className="font-serif text-2xl text-foreground mt-[7px] leading-[1.15]">
                   {contaTipo === 'vendedor' ? (contaNome || 'Sua torrefação') : (pronto?.perfilNome || melhorPerfilQuiz.nome)}
                 </div>
-                <p className="mt-2 text-[12.5px] text-pg-accent-fg leading-[1.55]">
+                <p className="mt-2 text-[12.5px] text-foreground leading-[1.55]">
                   {contaTipo === 'vendedor'
                     ? `Conta criada para ${email}. Cadastre seu primeiro café com perfil sensorial completo para entrar na curadoria do próximo ciclo.`
                     : `Suas caixas do plano ${contaPlano} vão priorizar cafés compatíveis com esse paladar${quizRestricoes.length ? ', respeitando: ' + quizRestricoes.join(', ') + '.' : '.'}`}
@@ -458,7 +458,7 @@ export default function LoginPage() {
                         <span className="text-[11.5px] text-[#5E4A3C]">{axis.label}</span>
                         <div className="flex gap-1">
                           {pipsFor(quiz[axis.key]).map((on, i) => (
-                            <span key={i} className={`w-[7px] h-[7px] rounded-full ${on ? 'bg-pg-terracotta' : 'bg-[#DED5C6]'}`} />
+                            <span key={i} className={`w-[7px] h-[7px] rounded-full ${on ? 'bg-primary' : 'bg-[#DED5C6]'}`} />
                           ))}
                         </div>
                       </div>
@@ -466,7 +466,7 @@ export default function LoginPage() {
                   </div>
                 )}
               </div>
-              <button disabled={loading} onClick={handleEntrarConta} className="cursor-pointer border-0 bg-pg-green text-pg-cream-2 text-[13.5px] py-[14px] rounded-[2px] disabled:opacity-60">
+              <button disabled={loading} onClick={handleEntrarConta} className="cursor-pointer border-0 bg-secondary text-secondary-foreground text-[13.5px] py-[14px] rounded-full disabled:opacity-60">
                 {contaTipo === 'vendedor' ? 'Abrir meu painel' : 'Entrar na vitrine'}
               </button>
             </div>
@@ -474,7 +474,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="text-[11.5px] text-[#8FA394] mt-[22px] max-w-[440px] text-center leading-[1.6]">
+      <div className="text-[11.5px] text-muted-foreground mt-[22px] max-w-[440px] text-center leading-[1.6]">
         Demonstração com dados fictícios · escolha uma conta de demonstração ou crie a sua.
       </div>
       </div>
